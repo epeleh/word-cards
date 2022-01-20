@@ -1,0 +1,14 @@
+AllCops:
+  NewCops: enable
+
+Layout/LineLength:
+  Max: 100
+
+Style/Documentation:
+  Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
