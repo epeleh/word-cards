@@ -1,0 +1,14 @@
+*
+
+!public/
+!src/
+!.browserslistrc
+!.eslintrc.js
+!babel.config.js
+!package.json
+!package-lock.json
+
+!.ruby-version
+!Gemfile
+!Gemfile.lock
+!server.rb*
