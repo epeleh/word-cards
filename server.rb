@@ -19,6 +19,7 @@ DB.create_table? :cards do
 
   string :text, unique: true, null: false
   string :translation, null: false
+  string :image_path
 
   datetime :met_at, null: false
   boolean :remembered, null: false, default: false
@@ -27,6 +28,20 @@ DB.create_table? :cards do
 
   datetime :created_at, null: false
   datetime :updated_at, null: false
+end
+
+DB[:cards].exclude(image_path: nil).select_map(:id).then do |image_card_ids|
+  File.delete(
+    *Dir[File.join(__dir__, 'storage', 'card_*.*')].reject do |image|
+      image_card_ids.include?(File.basename(image, File.extname(image)).delete_prefix('card_').to_i)
+    end
+  )
+
+  DB[:cards].where(
+    id: image_card_ids - Dir[File.join(__dir__, 'storage', 'card_*.*')].map do |image|
+      File.basename(image, File.extname(image)).delete_prefix('card_').to_i
+    end
+  ).update(image_path: nil)
 end
 
 # ===================================================== Rest API ===================================================== #
@@ -107,6 +122,25 @@ namespace '/api' do
       card.to_json
     end
 
+    post '/:id/image' do
+      halt(404) if DB[:cards].where(id: params[:id]).empty?
+      halt(400) if params.dig('image', 'tempfile').nil?
+
+      dist = File.join(__dir__, 'storage', "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
+      FileUtils.cp(params.dig('image', 'tempfile').path, dist)
+
+      halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: "/storage/#{File.basename(dist)}") == 1
+
+      File.delete(
+        *Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")].reject do |image|
+          File.extname(image) == File.extname(dist)
+        end
+      )
+
+      status 201
+      DB[:cards][id: params[:id]].to_json
+    end
+
     post do
       validate_card_body!
 
@@ -131,8 +165,18 @@ namespace '/api' do
       DB[:cards][id: params[:id]].to_json
     end
 
+    delete '/:id/image' do
+      halt(404) if DB[:cards].exclude(image_path: nil).where(id: params[:id]).empty?
+
+      halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: nil) == 1
+      File.delete(*Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")])
+
+      DB[:cards][id: params[:id]].to_json
+    end
+
     delete '/:id' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
+      File.delete(*Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")])
       DB[:cards].where(id: params[:id]).delete == 1 ? halt(200) : halt(500)
     end
   end
@@ -140,6 +184,10 @@ namespace '/api' do
   get '*' do
     halt 404
   end
+end
+
+get '/storage/:filename' do
+  send_file File.join(__dir__, 'storage', params[:filename])
 end
 
 get '/*' do
