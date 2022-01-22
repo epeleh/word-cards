@@ -75,12 +75,11 @@ def validate_card_body!
   halt 400, nil, errors.to_json
 end
 
-get '/' do
-  send_file File.join(settings.public_folder, 'index.html')
-end
-
 namespace '/api' do
-  before { content_type :json }
+  before do
+    content_type :json
+    headers 'Access-Control-Allow-Origin' => '*' if settings.development?
+  end
 
   error JSON::ParserError do
     status 400
@@ -137,6 +136,14 @@ namespace '/api' do
       DB[:cards].where(id: params[:id]).delete == 1 ? halt(200) : halt(500)
     end
   end
+
+  get '*' do
+    halt 404
+  end
+end
+
+get '/*' do
+  send_file File.join(settings.public_folder, 'index.html')
 end
 
 not_found { '' }
