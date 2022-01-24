@@ -2,8 +2,9 @@
   <router-view/>
 </template>
 
-<style lang="scss">
+<style lang="scss">/**/
 body {
   margin: 0;
+  background-color: #181818;
 }
 </style>
