@@ -107,13 +107,9 @@ namespace '/api' do
     end
 
     get '/next' do
-      halt(404) if DB[:cards].where(active: true).empty?
-
-      remembered = [true, false].sample
-      (
-        DB[:cards].where(active: true, remembered:).order(:met_at).first ||
-        DB[:cards].where(active: true, remembered: !remembered).order(:met_at).first
-      ).to_json
+      remembered = DB[:cards].where(active: true).order(Sequel.lit('RANDOM()')).get(:remembered)
+      halt(404) if remembered.nil?
+      DB[:cards].where(active: true, remembered:).order(:met_at).first.to_json
     end
 
     get '/:id' do
