@@ -93,7 +93,11 @@ end
 namespace '/api' do
   before do
     content_type :json
-    headers 'Access-Control-Allow-Origin' => '*' if settings.development?
+    if settings.development?
+      headers 'Access-Control-Allow-Origin' => '*'
+      headers 'Access-Control-Allow-Methods' => '*'
+      halt 200 if request.request_method == 'OPTIONS'
+    end
   end
 
   error JSON::ParserError do
