@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script>/**/
+<script>
 export default {
   name: 'Edit',
   components: {
@@ -48,7 +48,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">/**/
+<style scoped lang="scss">
 .search-bar {
   background-color: #fff;
 }
