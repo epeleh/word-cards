@@ -2,7 +2,7 @@
   <div class="home-page">
     <nav class="nav-bar">
       <router-link to="/edit" class="nav-btn">
-        <img src="@/assets/edit.svg" alt="Edit cards">
+        <EditIcon />
       </router-link>
     </nav>
     <main>
@@ -13,18 +13,18 @@
         <h4>{{`#${card.id}`}}</h4>
         <p v-if="inverted">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
-        <img
-          v-if="inverted && card.image_path" :src="backendUrl + card.image_path" alt="Word image"
-        >
+        <img v-if="inverted && card.image_path !== null"
+          :src="backendUrl + card.image_path" alt="Word image"
+        />
       </button>
       <div class="bottom-bts">
         <button v-on:click="onForgetClick()" class="btn forget-btn">
           <p>Forget</p>
-          <img src="@/assets/clear.svg" alt="Forget icon">
+          <ClearIcon />
         </button>
         <button v-on:click="onRememberClick()" class="btn remember-btn">
           <p>Remember</p>
-          <img src="@/assets/check.svg" alt="Remember icon">
+          <CheckIcon />
         </button>
       </div>
     </main>
@@ -32,9 +32,14 @@
 </template>
 
 <script>
+import EditIcon from '@/assets/edit.svg';
+import ClearIcon from '@/assets/clear.svg';
+import CheckIcon from '@/assets/check.svg';
+
 export default {
   name: 'Home',
   inject: ['backendUrl'],
+  components: { EditIcon, ClearIcon, CheckIcon },
   data: () => ({
     card: null,
     inverted: false,
@@ -107,8 +112,9 @@ export default {
     box-shadow: 4px 4px 2px #0f0f0f, inset -8px -3px 6px #7c7c7c;
     pointer-events: all;
 
-    img {
+    svg {
       height: 65%;
+      width: 42px;
       aspect-ratio: 1;
     }
   }
@@ -137,11 +143,13 @@ export default {
     height: 100%;
     background-color: transparent;
     transition: opacity 1s;
-    color: white;
-    fill: white;
 
     * {
       display: inline-block;
+    }
+
+    svg {
+      fill: white;
     }
   }
 
