@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <nav class="nav-bar">
-      <router-link to="/edit" class="nav-btn">
+      <router-link to="/edit" class="btn nav-btn">
         <EditIcon />
       </router-link>
     </nav>
@@ -17,13 +17,11 @@
           :src="backendUrl + card.image_path" alt="Word image"
         />
       </button>
-      <div class="bottom-bts">
+      <div class="side-btns">
         <button v-on:click="onForgetClick()" class="btn forget-btn">
-          <p>Forget</p>
           <ClearIcon />
         </button>
         <button v-on:click="onRememberClick()" class="btn remember-btn">
-          <p>Remember</p>
           <CheckIcon />
         </button>
       </div>
@@ -92,31 +90,75 @@ export default {
   overflow: hidden;
 }
 
-.nav-bar {
+.btn {
+  border: none;
+  width: 50%;
+  height: 100%;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 1s;
+  background-color: transparent;
+
+  &:active,
+  &:focus,
+  &:hover {
+    opacity: 1;
+  }
+
+  svg {
+    display: block;
+    position: absolute;
+    cursor: pointer;
+    margin: 0;
+    fill: #fff;
+  }
+}
+
+.nav-btn {
+  position: absolute;
+  width: calc(10vw + 24px);
+  height: calc(10vw + 24px);
+  z-index: 100;
+  right: 0;
+
+  svg {
+    position: relative;
+    margin: 50% auto 0;
+    transform: translateY(-50%) scale(1.5);
+  }
+}
+
+.side-btns {
   position: absolute;
   width: 100%;
-  pointer-events: none;
-  z-index: 100;
+  height: 100%;
 
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    justify-content:center;
-    float: right;
-    width: 12%;
-    min-width: 30px;
-    aspect-ratio: 1;
-    margin: 3%;
-    border-radius: 50%;
-    background-color: #bcbcbc;
-    box-shadow: 4px 4px 2px #0f0f0f, inset -8px -3px 6px #7c7c7c;
-    pointer-events: all;
+  @mixin side-btn-bg($deg, $color) {
+    background:
+      linear-gradient($deg + 12, $color 20%, transparent 50%),
+      linear-gradient($deg + 8 , $color 10%, transparent 40%),
+      linear-gradient($deg + 4 , $color 10%, transparent 40%),
+      linear-gradient($deg     , $color 0% , transparent 30%),
+      linear-gradient($deg - 4 , $color 10%, transparent 40%),
+      linear-gradient($deg - 8 , $color 10%, transparent 40%),
+      linear-gradient($deg - 12, $color 20%, transparent 50%);
+  }
 
-    svg {
-      height: 65%;
-      width: 42px;
-      aspect-ratio: 1;
-    }
+  .btn svg {
+    bottom: 5vw;
+    transform: scale(1.5);
+  }
+
+  .forget-btn {
+    @include side-btn-bg(90deg, #281010);
+    &:active { @include side-btn-bg(90deg, #301010); }
+    svg { left: 5%; }
+  }
+
+  .remember-btn {
+    @include side-btn-bg(270deg, #102810);
+    &:active { @include side-btn-bg(270deg, #103010); }
+    svg { right: 5%; }
   }
 }
 
@@ -129,69 +171,41 @@ export default {
   z-index: 50;
   cursor: pointer;
   border-radius: 16px;
-}
+  width: 60%;
+  max-width: 100vh;
+  box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
+  padding: 0;
+  overflow: hidden;
+  font-size: 150%;
+  line-height: 0;
+  border: none;
 
-.bottom-bts {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  bottom: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 
-  .btn {
-    border: none;
-    width: 50%;
-    height: 100%;
-    background-color: transparent;
-    transition: opacity 1s;
-
-    * {
-      display: inline-block;
-    }
-
-    svg {
-      fill: white;
-    }
+  h4 {
+    position: absolute;
+    right: 0;
+    margin: 14px 8px;
+    text-shadow: 2px 2px 6px #000;
+    transition: color 1s;
+    color: #ff7171;
+    font-size: 20px;
   }
 
-  @mixin side-btn($deg, $color) {
-    background:
-      linear-gradient($deg + 12, $color 20%, transparent 50%),
-      linear-gradient($deg + 8 , $color 10%, transparent 40%),
-      linear-gradient($deg + 4 , $color 10%, transparent 40%),
-      linear-gradient($deg     , $color 0% , transparent 30%),
-      linear-gradient($deg - 4 , $color 10%, transparent 40%),
-      linear-gradient($deg - 8 , $color 10%, transparent 40%),
-      linear-gradient($deg - 12, $color 20%, transparent 50%);
+  &.remembered h4 {
+    color: #7ae85c;
   }
 
-  .forget-btn {
-    @include side-btn(90deg, #281010);
-    opacity: 0.6;
-
-    &:focus,
-    &:hover {
-      opacity: 1;
-    }
-
-    &:active {
-      @include side-btn(90deg, #301010);
-      opacity: 1;
-    }
+  p {
+    line-height: normal;
+    margin: 24px 4px;
+    text-shadow: 2px 2px 6px #ccc;
+    font-size: 24px;
   }
 
-  .remember-btn {
-    @include side-btn(270deg, #102810);
-    opacity: 0.6;
-
-    &:focus,
-    &:hover {
-      opacity: 1;
-    }
-
-    &:active {
-      @include side-btn(270deg, #103010);
-      opacity: 1;
-    }
+  img {
+    width: 100%;
   }
 }
 </style>
