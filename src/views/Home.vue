@@ -20,10 +20,10 @@
       </button>
       <div class="side-btns">
         <button v-on:click="onForgetClick()" class="btn forget-btn">
-          <ClearIcon />
+          <div><ClearIcon /></div>
         </button>
         <button v-on:click="onRememberClick()" class="btn remember-btn">
-          <CheckIcon />
+          <div><CheckIcon /></div>
         </button>
       </div>
     </main>
@@ -112,6 +112,7 @@ export default {
   svg {
     display: block;
     position: absolute;
+    transform: translateY(-50%) scale(1.5);
     cursor: pointer;
     margin: 0;
     fill: #fff;
@@ -120,15 +121,16 @@ export default {
 
 .nav-btn {
   position: absolute;
-  width: calc(10vw + 24px);
-  height: calc(10vw + 24px);
+  width: calc(8vw + 24px);
+  height: calc(8vw + 24px);
+  max-width: calc(8vh + 24px);
+  max-height: calc(8vh + 24px);
   z-index: 100;
   right: 0;
 
   svg {
     position: relative;
     margin: 50% auto 0;
-    transform: translateY(-50%) scale(1.5);
   }
 }
 
@@ -148,21 +150,32 @@ export default {
       linear-gradient($deg - 12, $color 20%, transparent 50%);
   }
 
-  .btn svg {
-    bottom: 5vw;
-    transform: scale(1.5);
+  .btn div {
+    position: absolute;
+    width: calc(8vw + 24px);
+    height: calc(8vw + 24px);
+    max-width: calc(8vh + 24px);
+    max-height: calc(8vh + 24px);
+    bottom: 0;
+
+    svg {
+      position: relative;
+      margin: auto;
+      bottom: 0;
+      margin-top: 50%;
+    }
   }
 
   .forget-btn {
     @include side-btn-bg(90deg, #281010);
     &:active { @include side-btn-bg(90deg, #301010); }
-    svg { left: 5%; }
+    div { left: 0; }
   }
 
   .remember-btn {
     @include side-btn-bg(270deg, #102810);
     &:active { @include side-btn-bg(270deg, #103010); }
-    svg { right: 5%; }
+    div { right: 0; }
   }
 }
 
@@ -183,9 +196,6 @@ export default {
   font-size: 150%;
   line-height: 0;
   border: none;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
 
   .inverted-icon {
     position: absolute;
@@ -213,13 +223,16 @@ export default {
 
   p {
     line-height: normal;
-    margin: 26px 4px;
+    margin: 26px 4px 24px;
     text-shadow: 2px 2px 6px #ccc;
     font-size: 24px;
   }
 
   img {
     width: 100%;
+    margin-top: -10px;
+    max-height: 30vh;
+    object-fit: cover;
   }
 }
 </style>

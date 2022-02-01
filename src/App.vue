@@ -10,5 +10,7 @@
 body {
   margin: 0;
   background-color: #181818;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 </style>
