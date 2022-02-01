@@ -10,7 +10,7 @@
       <button v-else-if="typeof this.card?.id === 'number'"
         v-on:click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
-        <EditIcon v-if="inverted" />
+        <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4>{{`#${card.id}`}}</h4>
         <p v-if="inverted">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
@@ -34,11 +34,14 @@
 import EditIcon from '@/assets/edit.svg';
 import ClearIcon from '@/assets/clear.svg';
 import CheckIcon from '@/assets/check.svg';
+import DescriptionIcon from '@/assets/description.svg';
 
 export default {
   name: 'Home',
   inject: ['backendUrl'],
-  components: { EditIcon, ClearIcon, CheckIcon },
+  components: {
+    EditIcon, ClearIcon, CheckIcon, DescriptionIcon,
+  },
   data: () => ({
     card: null,
     inverted: false,
@@ -184,8 +187,18 @@ export default {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 
+  .inverted-icon {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    margin: 2px 4px;
+    transform: scale(0.75);
+    fill: #646464;
+  }
+
   h4 {
     position: absolute;
+    display: inline-block;
     right: 0;
     margin: 14px 8px;
     text-shadow: 2px 2px 6px #000;
@@ -200,7 +213,7 @@ export default {
 
   p {
     line-height: normal;
-    margin: 24px 4px;
+    margin: 26px 4px;
     text-shadow: 2px 2px 6px #ccc;
     font-size: 24px;
   }
