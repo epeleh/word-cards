@@ -111,10 +111,10 @@ export default {
 
   svg {
     display: block;
-    position: absolute;
+    position: relative;
     transform: translateY(-50%) scale(1.5);
     cursor: pointer;
-    margin: 0;
+    margin: 50% auto 0;
     fill: #fff;
   }
 }
@@ -125,13 +125,9 @@ export default {
   height: calc(8vw + 24px);
   max-width: calc(8vh + 24px);
   max-height: calc(8vh + 24px);
+  cursor: default;
   z-index: 100;
   right: 0;
-
-  svg {
-    position: relative;
-    margin: 50% auto 0;
-  }
 }
 
 .side-btns {
@@ -157,13 +153,6 @@ export default {
     max-width: calc(8vh + 24px);
     max-height: calc(8vh + 24px);
     bottom: 0;
-
-    svg {
-      position: relative;
-      margin: auto;
-      bottom: 0;
-      margin-top: 50%;
-    }
   }
 
   .forget-btn {
