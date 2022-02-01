@@ -124,7 +124,7 @@ namespace '/api' do
 
     post '/:id/image' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
-      halt(400) if params.dig('image', 'tempfile').nil?
+      halt(400) if params.dig('image', 'tempfile').nil? || !params.dig('image', 'type').start_with?('image/')
 
       dist = File.join(__dir__, 'storage', "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
       FileUtils.cp(params.dig('image', 'tempfile').path, dist)
