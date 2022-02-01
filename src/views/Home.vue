@@ -10,6 +10,7 @@
       <button v-else-if="typeof this.card?.id === 'number'"
         v-on:click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
+        <EditIcon v-if="inverted" />
         <h4>{{`#${card.id}`}}</h4>
         <p v-if="inverted">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
