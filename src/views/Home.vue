@@ -186,6 +186,11 @@ export default {
   line-height: 0;
   border: none;
 
+  &:focus,
+  &:hover {
+    box-shadow: 6px 6px 15px #000, inset 0 0 15px #9b9b9b;
+  }
+
   .inverted-icon {
     position: absolute;
     display: inline-block;

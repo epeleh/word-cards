@@ -19,6 +19,7 @@ module.exports = {
     'no-multi-spaces': 'warn',
     'space-in-parens': 'warn',
     'comma-dangle': 'warn',
+    'arrow-parens': 'warn',
     'no-shadow': 'warn',
     indent: 'warn',
     semi: 'warn',
