@@ -8,10 +8,12 @@
 
     <header class="header-bar">
       <div class="search">
-        <SearchIcon />
-        <input type="text" name="search" id="filter">
-        <button>
-          <ClearIcon />
+        <SearchIcon class="search-icon" />
+        <input type="text" name="search" placeholder="search" class="search-input"
+          :value="search" @input="(e) => search = e.target.value"
+        >
+        <button v-on:click="onClearSearchClick()" class="btn search-btn">
+          <ClearIcon v-if="search" />
         </button>
       </div>
     </header>
@@ -20,7 +22,7 @@
       <div class="cards">
         <div class="card create-card">
         </div>
-        <div v-for="card in cards" :key="card.id"
+        <div v-for="card in filteredCards" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
           <div class="card-menu">
@@ -42,6 +44,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 import SearchIcon from '@/assets/search.svg';
 import ClearIcon from '@/assets/clear.svg';
 import CheckIcon from '@/assets/check.svg';
@@ -58,13 +62,30 @@ export default {
   },
   data: () => ({
     cards: null,
+    search: '',
   }),
+  computed: {
+    filteredCards() {
+      if (!_.isArray(this.cards)) return [];
+      return _.orderBy(
+        this.cards.filter(({ id, text, translation }) => (
+          `#${id}`.toLowerCase().includes(this.search.toLowerCase())
+            || text.toLowerCase().includes(this.search.toLowerCase())
+            || translation.toLowerCase().includes(this.search.toLowerCase())
+        )),
+        ['active', 'met_at'], ['desc', 'asc'],
+      );
+    },
+  },
   async created() {
     this.cards = await fetch(`${this.backendUrl}/api/cards`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
   methods: {
+    onClearSearchClick() {
+      this.search = '';
+    },
   },
 };
 </script>
@@ -124,10 +145,38 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     width: 40%;
-    border-radius: 16px;
     margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
 
-    background-color: white;
+    .search-icon {
+      fill: #fff;
+      transform: scale(1.5);
+      opacity: 0.6;
+      min-width: 24px;
+    }
+
+    .search-input {
+      flex: 1;
+      border-radius: 8px;
+      text-align: center;
+      height: 22px;
+      max-width: calc(84vw - 120px);
+      text-shadow: 1px 1px 2px #cdcdcd;
+      box-shadow: 4px 4px 12px #0f0f0f, inset 0 0 4px #9b9b9b;
+    }
+
+    .search-btn {
+      width: auto;
+      min-width: 24px;
+
+      svg {
+        margin: 0;
+        transform: scale(1.5);
+      }
+    }
   }
 }
 </style>
