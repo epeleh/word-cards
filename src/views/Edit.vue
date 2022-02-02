@@ -12,7 +12,7 @@
         <input type="text" name="search" placeholder="search" class="search-input"
           :value="search" @input="(e) => search = e.target.value"
         >
-        <button v-on:click="onClearSearchClick()" class="btn search-btn">
+        <button v-on:click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
           <ClearIcon v-if="search" />
         </button>
       </div>
@@ -20,8 +20,19 @@
 
     <main>
       <div class="cards">
-        <div class="card create-card">
-        </div>
+        <form v-if="!search" class="card create-card">
+          <input type="text" name="text" placeholder="text" class="text-input"
+            :value="newCard.text" @input="(e) => newCard.text = e.target.value"
+            autocomplete="off"
+          >
+          <input type="text" name="translation" placeholder="translation" class="translation-input"
+            :value="newCard.translation" @input="(e) => newCard.translation = e.target.value"
+            autocomplete="off"
+          >
+          <button type="submit" class="add-btn" :disabled="!newCard.text || !newCard.translation">
+            <AddIcon />
+          </button>
+        </form>
         <div v-for="card in filteredCards" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
@@ -33,8 +44,12 @@
             <h4>{{`#${card.id}`}}</h4>
           </div>
           <div>
-            <p>{{card.translation}}</p>
-            <p>{{card.text}}</p>
+            <input type="text" name="text" :value="card.text"
+              placeholder="text" autocomplete="off" class="text-input"
+            >
+            <input type="text" name="translation" :value="card.translation"
+              placeholder="translation" autocomplete="off" class="translation-input"
+            >
           </div>
         </div>
       </div>
@@ -50,6 +65,7 @@ import SearchIcon from '@/assets/search.svg';
 import ClearIcon from '@/assets/clear.svg';
 import CheckIcon from '@/assets/check.svg';
 
+import AddIcon from '@/assets/add.svg';
 import VisibilityIcon from '@/assets/visibility.svg';
 import VisibilityOffIcon from '@/assets/visibility_off.svg';
 import InfoIcon from '@/assets/info.svg';
@@ -58,22 +74,22 @@ export default {
   name: 'Edit',
   inject: ['backendUrl'],
   components: {
-    SearchIcon, ClearIcon, CheckIcon, VisibilityIcon, VisibilityOffIcon, InfoIcon,
+    SearchIcon, ClearIcon, CheckIcon, AddIcon, VisibilityIcon, VisibilityOffIcon, InfoIcon,
   },
   data: () => ({
-    cards: null,
     search: '',
+    cards: [],
+    newCard: { text: '', translation: '' },
   }),
   computed: {
     filteredCards() {
-      if (!_.isArray(this.cards)) return [];
       return _.orderBy(
         this.cards.filter(({ id, text, translation }) => (
           `#${id}`.toLowerCase().includes(this.search.toLowerCase())
             || text.toLowerCase().includes(this.search.toLowerCase())
             || translation.toLowerCase().includes(this.search.toLowerCase())
         )),
-        ['active', 'met_at'], ['desc', 'asc'],
+        ['active', 'met_at', 'id'], ['desc', 'asc', 'asc'],
       );
     },
   },
@@ -96,7 +112,6 @@ export default {
   width: 100%;
   height: 100%;
   box-shadow: inset 0 0 30px 5px #000;
-  overflow: hidden;
 }
 
 .btn {
@@ -175,6 +190,104 @@ export default {
       svg {
         margin: 0;
         transform: scale(1.5);
+      }
+    }
+  }
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 340px);
+  justify-content: center;
+  align-items: baseline;
+  gap: 22px;
+  padding: 6px 2% 12px;
+
+  .card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
+    padding: 0;
+    overflow: hidden;
+    font-size: 150%;
+    border: none;
+    width: 340px;
+
+    .card-menu {
+      margin: 4px 0 -12px;
+
+      button {
+        fill: #646464;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0 6px;
+
+        &:active,
+        &:focus,
+        &:hover {
+          fill: #000;
+        }
+      }
+
+      h4 {
+        float: right;
+        text-shadow: 2px 2px 6px #000;
+        color: #ff7171;
+        font-size: 20px;
+        padding: 0 10px;
+        margin: -2px 0 0;
+        cursor: default;
+      }
+    }
+
+    &.remembered .card-menu h4 {
+      color: #7ae85c;
+    }
+
+    .text-input,
+    .translation-input {
+      display: block;
+      text-shadow: 2px 2px 6px #ccc;
+      text-align: center;
+      font-size: 24px;
+      width: calc(100% - 8px);
+      margin: 8px 0;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-color: #0002;
+      padding: 2px 4px;
+    }
+  }
+
+  .create-card .add-btn {
+    display: block;
+    width: 40%;
+    border: none;
+    margin: 10px auto;
+    box-shadow: 2px 2px 2px #8f8f8f, inset 0 0 12px #9b9b9b;
+    border-radius: 6px;
+    cursor: pointer;
+    fill: #646464;
+    background-color: #fff;
+    transition: opacity 1s;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.2;
+    }
+
+    &:not(:disabled) {
+      &:focus,
+      &:hover {
+        background-color: #e5ffde;
+      }
+
+      &:active {
+        box-shadow: 2px 2px 2px #aaa, inset 0 0 12px #9b9b9b;
+        background-color: #d2ffc6;
       }
     }
   }
