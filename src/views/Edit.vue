@@ -20,19 +20,33 @@
 
     <main>
       <div class="cards">
-        <form v-if="!search" class="card create-card">
-          <input type="text" name="text" placeholder="text" class="text-input"
-            :value="newCard.text" @input="(e) => newCard.text = e.target.value"
-            autocomplete="off"
-          >
-          <input type="text" name="translation" placeholder="translation" class="translation-input"
-            :value="newCard.translation" @input="(e) => newCard.translation = e.target.value"
-            autocomplete="off"
-          >
+
+        <form v-if="!search" @submit.prevent="createCard" class="card create-card">
+          <div>
+            <div class="errors-info" v-if="cardErrors[0]?.text"
+              :title="cardErrors[0].text.join('\n')"
+            ><InfoIcon /></div>
+            <input type="text" name="text" placeholder="text"
+              :value="newCard.text" @input="(e) => newCard.text = e.target.value"
+              autocomplete="off" class="text-input"
+            >
+          </div>
+
+          <div>
+            <div class="errors-info" v-if="cardErrors[0]?.translation"
+              :title="cardErrors[0].translation.join('\n')"
+            ><InfoIcon /></div>
+            <input type="text" name="translation" placeholder="translation"
+              :value="newCard.translation" @input="(e) => newCard.translation = e.target.value"
+              autocomplete="off" class="translation-input"
+            >
+          </div>
+
           <button type="submit" class="add-btn" :disabled="!newCard.text || !newCard.translation">
             <AddIcon />
           </button>
         </form>
+
         <div v-for="card in filteredCards" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
@@ -43,15 +57,28 @@
             <button><InfoIcon /></button>
             <h4>{{`#${card.id}`}}</h4>
           </div>
+
           <div>
-            <input type="text" name="text" :value="card.text"
-              placeholder="text" autocomplete="off" class="text-input"
-            >
-            <input type="text" name="translation" :value="card.translation"
-              placeholder="translation" autocomplete="off" class="translation-input"
-            >
+            <div>
+              <div class="errors-info" v-if="cardErrors[card.id]?.text"
+                :title="cardErrors[card.id].text.join('\n')"
+              ><InfoIcon /></div>
+              <input type="text" name="text" :value="card.text"
+                placeholder="text" autocomplete="off" class="text-input"
+              >
+            </div>
+
+            <div>
+              <div class="errors-info" v-if="cardErrors[card.id]?.translation"
+                :title="cardErrors[card.id].translation.join('\n')"
+              ><InfoIcon /></div>
+              <input type="text" name="translation" :value="card.translation"
+                placeholder="translation" autocomplete="off" class="translation-input"
+              >
+            </div>
           </div>
         </div>
+
       </div>
     </main>
 
@@ -79,6 +106,7 @@ export default {
   data: () => ({
     search: '',
     cards: [],
+    cardErrors: {},
     newCard: { text: '', translation: '' },
   }),
   computed: {
@@ -89,7 +117,7 @@ export default {
             || text.toLowerCase().includes(this.search.toLowerCase())
             || translation.toLowerCase().includes(this.search.toLowerCase())
         )),
-        ['active', 'met_at', 'id'], ['desc', 'asc', 'asc'],
+        ['active', 'met_at', 'id'], ['desc', 'desc', 'asc'],
       );
     },
   },
@@ -102,6 +130,24 @@ export default {
     onClearSearchClick() {
       this.search = '';
     },
+    async createCard() {
+      const [data, status] = await fetch(
+        `${this.backendUrl}/api/cards`, { method: 'POST', body: JSON.stringify(this.newCard) },
+      ).then(async (x) => ([await x.json(), x.status]));
+
+      delete this.cardErrors[0];
+
+      switch (status) {
+        case 201:
+          this.cards.push(data);
+          this.newCard = { text: '', translation: '' };
+          break;
+
+        case 400:
+          this.cardErrors[0] = data;
+          break;
+      }
+    },
   },
 };
 </script>
@@ -110,7 +156,7 @@ export default {
 .edit-page {
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   box-shadow: inset 0 0 30px 5px #000;
 }
 
@@ -212,9 +258,16 @@ export default {
     font-size: 150%;
     border: none;
     width: 340px;
+    transition: box-shadow 0.2s;
+
+    &:focus,
+    &:hover {
+      box-shadow: 6px 6px 15px #000, inset 0 0 15px #9b9b9b;
+    }
 
     .card-menu {
       margin: 4px 0 -12px;
+      padding: 0 2px;
 
       button {
         fill: #646464;
@@ -222,7 +275,7 @@ export default {
         border: none;
         cursor: pointer;
         padding: 0;
-        margin: 0 6px;
+        margin: 0 4px;
 
         &:active,
         &:focus,
@@ -236,7 +289,7 @@ export default {
         text-shadow: 2px 2px 6px #000;
         color: #ff7171;
         font-size: 20px;
-        padding: 0 10px;
+        padding: 0 8px;
         margin: -2px 0 0;
         cursor: default;
       }
@@ -260,6 +313,24 @@ export default {
       border-color: #0002;
       padding: 2px 4px;
     }
+
+    .errors-info {
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      margin: 4px;
+      cursor: pointer;
+
+      svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1.1);
+        fill: #ff7171;
+        background-color: #fff;
+        border-radius: 50%;
+      }
+    }
   }
 
   .create-card .add-btn {
@@ -272,7 +343,7 @@ export default {
     cursor: pointer;
     fill: #646464;
     background-color: #fff;
-    transition: opacity 1s;
+    transition: opacity 1s, background-color 0.2s;
 
     &:disabled {
       cursor: not-allowed;

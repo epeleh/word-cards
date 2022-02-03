@@ -185,6 +185,7 @@ export default {
   font-size: 150%;
   line-height: 0;
   border: none;
+  transition: box-shadow 0.2s;
 
   &:focus,
   &:hover {
@@ -225,7 +226,7 @@ export default {
   img {
     width: 100%;
     margin-top: -10px;
-    max-height: 30vh;
+    max-height: 40vh;
     object-fit: cover;
   }
 }
