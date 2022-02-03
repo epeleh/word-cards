@@ -17,9 +17,9 @@ end
 DB.create_table? :cards do
   primary_key :id
 
-  string :text, unique: true, null: false
-  string :translation, null: false
-  string :image_path
+  text :text, unique: true, null: false
+  text :translation, null: false
+  text :image_path
 
   datetime :met_at, null: false
   boolean :remembered, null: false, default: false
