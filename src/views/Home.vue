@@ -6,8 +6,8 @@
       </router-link>
     </nav>
     <main>
-      <h2 v-if="this.card === 404" class="no-cards-banner">You have no active cards :(</h2>
-      <button v-else-if="typeof this.card?.id === 'number'"
+      <h2 v-if="card === 404" class="no-cards-banner">You have no active cards :(</h2>
+      <button v-else-if="typeof card?.id === 'number'"
         @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
@@ -18,7 +18,7 @@
           :src="backendUrl + card.image_path" alt="Word image"
         />
       </button>
-      <div class="side-btns">
+      <div class="side-btns" v-if="typeof card?.id === 'number'">
         <button @click="onForgetClick()" class="btn forget-btn">
           <div><ClearIcon /></div>
         </button>
@@ -57,8 +57,6 @@ export default {
     onRememberClick() { this.nextCard({ remembered: true }); },
     async nextCard({ remembered }) {
       document.activeElement.blur();
-
-      if (typeof this.card?.id !== 'number') return;
 
       const now = new Date();
       const body = JSON.stringify({
@@ -229,5 +227,15 @@ export default {
     max-height: 40vh;
     object-fit: cover;
   }
+}
+
+.no-cards-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
 }
 </style>
