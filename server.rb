@@ -59,7 +59,9 @@ def validate_card_body!
     errors['text'] << 'cannot be null'
   elsif !data['text'].is_a?(String)
     errors['text'] << 'should be a string'
-  elsif !DB[:cards].exclude(id: params[:id]).where(text: data['text']).empty?
+  elsif data['text'].strip.empty?
+    errors['text'] << 'cannot be blank'
+  elsif !DB[:cards].exclude(id: params[:id]).where(text: data['text'].strip).empty?
     errors['text'] << 'should be unique'
   end
 
@@ -67,6 +69,8 @@ def validate_card_body!
     errors['translation'] << 'cannot be null'
   elsif !data['translation'].is_a?(String)
     errors['translation'] << 'should be a string'
+  elsif data['translation'].strip.empty?
+    errors['translation'] << 'cannot be blank'
   end
 
   if data['met_at'].nil?
@@ -149,6 +153,9 @@ namespace '/api' do
         JSON.parse(request.body.tap(&:rewind).read).slice('text', 'translation', 'met_at', 'remembered', 'active')
       )
 
+      attributes['text'].strip!
+      attributes['translation'].strip!
+
       status 201
       DB[:cards][id: DB[:cards].insert(attributes)].to_json
     end
@@ -160,6 +167,9 @@ namespace '/api' do
       attributes = { 'updated_at' => Time.now.utc }.merge(
         JSON.parse(request.body.tap(&:rewind).read).slice('text', 'translation', 'met_at', 'remembered', 'active')
       )
+
+      attributes['text'].strip!
+      attributes['translation'].strip!
 
       halt(500) unless DB[:cards].where(id: params[:id]).update(attributes) == 1
       DB[:cards][id: params[:id]].to_json

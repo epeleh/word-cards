@@ -8,7 +8,7 @@
     <main>
       <h2 v-if="this.card === 404" class="no-cards-banner">You have no active cards :(</h2>
       <button v-else-if="typeof this.card?.id === 'number'"
-        v-on:click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
+        @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4>{{`#${card.id}`}}</h4>
@@ -19,10 +19,10 @@
         />
       </button>
       <div class="side-btns">
-        <button v-on:click="onForgetClick()" class="btn forget-btn">
+        <button @click="onForgetClick()" class="btn forget-btn">
           <div><ClearIcon /></div>
         </button>
-        <button v-on:click="onRememberClick()" class="btn remember-btn">
+        <button @click="onRememberClick()" class="btn remember-btn">
           <div><CheckIcon /></div>
         </button>
       </div>

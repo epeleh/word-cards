@@ -12,7 +12,7 @@
         <input type="text" name="search" placeholder="search" class="search-input"
           :value="search" @input="(e) => search = e.target.value"
         >
-        <button v-on:click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
+        <button @click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
           <ClearIcon v-if="search" />
         </button>
       </div>
@@ -51,9 +51,13 @@
           class="card" :class="{ remembered: card.remembered }"
         >
           <div class="card-menu">
-            <button><ClearIcon /></button>
-            <button v-if="card.active"><VisibilityIcon /></button>
-            <button v-else><VisibilityOffIcon /></button>
+            <button @click="deleteCard(card.id)"><ClearIcon /></button>
+            <button v-if="card.active" @click="updateCard(card.id, { active: false })">
+              <VisibilityIcon />
+            </button>
+            <button v-else @click="updateCard(card.id, { active: true })">
+              <VisibilityOffIcon />
+            </button>
             <button><InfoIcon /></button>
             <h4>{{`#${card.id}`}}</h4>
           </div>
@@ -63,8 +67,10 @@
               <div class="errors-info" v-if="cardErrors[card.id]?.text"
                 :title="cardErrors[card.id].text.join('\n')"
               ><InfoIcon /></div>
-              <input type="text" name="text" :value="card.text"
-                placeholder="text" autocomplete="off" class="text-input"
+              <input type="text" name="text" placeholder="text"
+                :value="card.text"
+                @input="(e) => updateCard(card.id, { text: e.target.value })"
+                autocomplete="off" class="text-input"
               >
             </div>
 
@@ -72,8 +78,10 @@
               <div class="errors-info" v-if="cardErrors[card.id]?.translation"
                 :title="cardErrors[card.id].translation.join('\n')"
               ><InfoIcon /></div>
-              <input type="text" name="translation" :value="card.translation"
-                placeholder="translation" autocomplete="off" class="translation-input"
+              <input type="text" name="translation" placeholder="translation"
+                :value="card.translation"
+                @input="(e) => updateCard(card.id, { translation: e.target.value })"
+                autocomplete="off" class="translation-input"
               >
             </div>
           </div>
@@ -106,8 +114,8 @@ export default {
   data: () => ({
     search: '',
     cards: [],
-    cardErrors: {},
     newCard: { text: '', translation: '' },
+    cardErrors: {},
   }),
   computed: {
     filteredCards() {
@@ -135,18 +143,38 @@ export default {
         `${this.backendUrl}/api/cards`, { method: 'POST', body: JSON.stringify(this.newCard) },
       ).then(async (x) => ([await x.json(), x.status]));
 
-      delete this.cardErrors[0];
-
       switch (status) {
         case 201:
           this.cards.push(data);
           this.newCard = { text: '', translation: '' };
+          delete this.cardErrors[0];
           break;
 
         case 400:
           this.cardErrors[0] = data;
           break;
       }
+    },
+    async updateCard(cardId, changes) {
+      const body = JSON.stringify(Object.assign(this.cards.find((x) => x.id === cardId), changes));
+
+      const [data, status] = await fetch(
+        `${this.backendUrl}/api/cards/${cardId}`, { method: 'PUT', body },
+      ).then(async (x) => ([await x.json(), x.status]));
+
+      switch (status) {
+        case 200:
+          delete this.cardErrors[cardId];
+          break;
+
+        case 400:
+          this.cardErrors[cardId] = data;
+          break;
+      }
+    },
+    deleteCard(cardId) {
+      this.cards = this.cards.filter((x) => x.id !== cardId);
+      fetch(`${this.backendUrl}/api/cards/${cardId}`, { method: 'DELETE' });
     },
   },
 };
