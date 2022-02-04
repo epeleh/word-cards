@@ -73,16 +73,16 @@ export default {
       const str = text.substr(0, text.indexOf(':'));
       const date = new Date(text.substr(text.indexOf(':') + 1));
 
-      if (this.$windowWidth < 340) return '';
+      if (this.$windowWidth < 580) return '';
 
-      return `${this.$windowWidth < 660 ? str[0] : str}: ${[
+      return `${this.$windowWidth < 800 ? str[0] : str}: ${[
         date.getUTCFullYear(), '-', date.getUTCMonth() + 1, '-', date.getUTCDate(),
-        this.$windowWidth < 460 ? '' : ' ',
-        this.$windowWidth < 460 ? '' : date.getUTCHours(),
-        this.$windowWidth < 460 ? '' : ':',
-        this.$windowWidth < 460 ? '' : date.getUTCMinutes(),
-        this.$windowWidth < 720 ? '' : ':',
-        this.$windowWidth < 720 ? '' : date.getUTCSeconds(),
+        this.$windowWidth < 670 ? '' : ' ',
+        this.$windowWidth < 670 ? '' : date.getUTCHours(),
+        this.$windowWidth < 670 ? '' : ':',
+        this.$windowWidth < 670 ? '' : date.getUTCMinutes(),
+        this.$windowWidth < 840 ? '' : ':',
+        this.$windowWidth < 840 ? '' : date.getUTCSeconds(),
       ].map((x) => (typeof x === 'string' ? x : String(x).padStart(2, '0'))).join('')}`;
     },
     async uploadImage(event) {
@@ -139,6 +139,7 @@ export default {
 
 .card-info {
   flex: 1;
+  min-width: 360px;;
   border-radius: 16px;
   width: 60%;
   max-width: 100vh;
