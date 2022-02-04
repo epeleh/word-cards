@@ -20,6 +20,7 @@ module.exports = {
     'arrow-body-style': 'warn',
     'no-multi-spaces': 'warn',
     'space-in-parens': 'warn',
+    'prefer-template': 'warn',
     'no-unreachable': 'warn',
     'padded-blocks': 'warn',
     'comma-dangle': 'warn',
