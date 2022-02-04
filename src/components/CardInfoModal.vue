@@ -4,7 +4,9 @@
     <div class="info" v-else-if="typeof card?.id === 'number'">
       <div class="placeholder"></div>
 
-      <div class="card-info" :class="{ remembered: card.remembered }" @click.stop>
+      <div class="card-info" @click.stop
+        :class="{ remembered: card.remembered, 'delete-image-btn-hover': deleteImageBtnHover }"
+      >
         <div class="card-menu">
           <VisibilityIcon v-if="card.active" />
           <VisibilityOffIcon v-else />
@@ -14,24 +16,22 @@
         <p>{{card.text}}</p>
         <p>{{card.translation}}</p>
 
-        <img v-if="card.image_path !== null"
-          :src="backendUrl + card.image_path" alt="Word image"
-        />
+        <div class="upload-image">
+          <button @click="deleteImage" v-if="card.image_path !== null" class="delete-image-btn"
+            @mouseover="deleteImageBtnHover = true" @mouseleave="deleteImageBtnHover = false"
+          ><ClearIcon /></button>
 
-        <!-- <form @submit.prevent="uploadImage" class="upload-image">
-          <div class="upload-input">
-            <input class="upload-file" type="file" name="image" accept="image/*" />
-            <label for="image">
-              <strong>Choose an image</strong>
-              <span class="upload-dragndrop"> or drag it here</span>.
-            </label>
-            <button class="upload-button" type="submit">Upload</button>
+          <input type="file" accept="image/*" class="upload-input"
+            @change="uploadImage($event)" ref="uploadImageInput"
+          />
+          <div class="upload-message" :class="{ 'upload-field': card.image_path === null }">
+            <SaveIcon />
+            <p>Upload an image</p>
           </div>
-
-          <div class="upload-uploading">Uploading…</div>
-          <div class="upload-success">Done!</div>
-          <div class="upload-error">Error! <span></span>.</div>
-        </form> -->
+          <img v-if="card.image_path !== null" class="upload-img"
+            :src="backendUrl + card.image_path" alt="Word image"
+          />
+        </div>
       </div>
 
       <ul class="additional-info">
@@ -46,12 +46,14 @@
 <script>
 import VisibilityIcon from '@/assets/visibility.svg';
 import VisibilityOffIcon from '@/assets/visibility_off.svg';
+import ClearIcon from '@/assets/clear.svg';
+import SaveIcon from '@/assets/save.svg';
 
 export default {
   name: 'CardInfoModal',
   inject: ['backendUrl'],
   components: {
-    VisibilityIcon, VisibilityOffIcon,
+    VisibilityIcon, VisibilityOffIcon, ClearIcon, SaveIcon,
   },
   props: {
     cardId: { type: Number, required: true },
@@ -59,6 +61,7 @@ export default {
   },
   data: () => ({
     card: null,
+    deleteImageBtnHover: false,
   }),
   async created() {
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
@@ -81,6 +84,25 @@ export default {
         this.$windowWidth < 720 ? '' : ':',
         this.$windowWidth < 720 ? '' : date.getUTCSeconds(),
       ].map((x) => (typeof x === 'string' ? x : String(x).padStart(2, '0'))).join('')}`;
+    },
+    async uploadImage(event) {
+      const data = new FormData();
+      data.append('image', event.target.files[0]);
+
+      this.card = await fetch(
+        `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'POST', body: data },
+      ).then(
+        (x) => (x.ok ? x.json() : x.status),
+      );
+    },
+    async deleteImage() {
+      this.card = await fetch(
+        `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'DELETE' },
+      ).then(
+        (x) => (x.ok ? x.json() : x.status),
+      );
+
+      this.$refs.uploadImageInput.value = null;
     },
   },
 };
@@ -130,13 +152,13 @@ export default {
   transition: box-shadow 0.2s;
   background-color: #fff;
 
-  &:focus,
-  &:hover {
+  &:not(.delete-image-btn-hover):focus,
+  &:not(.delete-image-btn-hover):hover {
     box-shadow: 6px 6px 15px #000, inset 0 0 15px #9b9b9b;
   }
 
   .card-menu {
-    margin: 4px 0 -12px;
+    margin: 4px 0 -6px;
     padding: 0 2px;
 
     svg {
@@ -163,17 +185,89 @@ export default {
   p {
     text-align: center;
     line-height: normal;
-    margin: 26px 4px 24px;
+    margin: 12px 4px;
     text-shadow: 2px 2px 6px #ccc;
     font-size: 24px;
   }
 
-  /*.upload-image {
+  .upload-image {
+    position: relative;
     width: 100%;
-    margin-top: -10px;
-    max-height: 40vh;
-    object-fit: cover;
-  }*/
+
+    .delete-image-btn {
+      position: fixed;
+      padding: 4px;
+      background-color: transparent;
+      border: none;
+      fill: #111;
+      cursor: pointer;
+      transform: translateX(-100%);
+      filter: drop-shadow(0 0 15px #fff);
+
+      &:active,
+      &:focus,
+      &:hover {
+        fill: #000;
+      }
+    }
+
+    .upload-message {
+      position: absolute;
+      height: 91%;
+      width: 94%;
+      margin: 3%;
+      padding: 24px;
+      box-sizing: border-box;
+      border: 2px dashed #000;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+
+      svg {
+        transform: scale(2);
+        filter: drop-shadow(2px 2px 6px #fff);
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    &:focus .upload-message,
+    &:hover .upload-message {
+      opacity: 0.5;
+    }
+
+    .upload-field {
+      position: relative;
+      opacity: 0.5;
+    }
+
+    &:focus .upload-field,
+    &:hover .upload-field {
+      opacity: 0.8;
+    }
+
+    .upload-input {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    img {
+      width: 100%;
+      max-height: 40vh;
+      object-fit: cover;
+    }
+  }
 }
 
 .additional-info {
