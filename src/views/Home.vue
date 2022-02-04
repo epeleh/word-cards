@@ -177,6 +177,7 @@ export default {
   border-radius: 16px;
   width: 60%;
   max-width: 100vh;
+  background-color: #fff;
   box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
   padding: 0;
   overflow: hidden;
@@ -237,5 +238,6 @@ export default {
   transform: translate(-50%, -50%);
   text-align: center;
   color: #fff;
+  text-shadow: 1px 1px 10px #00000075;
 }
 </style>

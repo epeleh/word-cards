@@ -20,7 +20,6 @@
 
     <main>
       <div class="cards">
-
         <form v-if="!search" @submit.prevent="createCard" class="card create-card">
           <div>
             <div class="errors-info" v-if="cardErrors[0]?.text"
@@ -58,7 +57,7 @@
             <button v-else @click="updateCard(card.id, { active: true })">
               <VisibilityOffIcon />
             </button>
-            <button><InfoIcon /></button>
+            <button @click="modalCardId = card.id"><InfoIcon /></button>
             <h4>{{`#${card.id}`}}</h4>
           </div>
 
@@ -86,10 +85,12 @@
             </div>
           </div>
         </div>
-
       </div>
-    </main>
 
+      <CardInfoModal v-if="typeof modalCardId === 'number'"
+        :cardId="modalCardId" :closeModal="() => modalCardId = null"
+      />
+    </main>
   </div>
 </template>
 
@@ -105,17 +106,27 @@ import VisibilityIcon from '@/assets/visibility.svg';
 import VisibilityOffIcon from '@/assets/visibility_off.svg';
 import InfoIcon from '@/assets/info.svg';
 
+import CardInfoModal from '@/components/CardInfoModal.vue';
+
 export default {
   name: 'Edit',
   inject: ['backendUrl'],
   components: {
-    SearchIcon, ClearIcon, CheckIcon, AddIcon, VisibilityIcon, VisibilityOffIcon, InfoIcon,
+    SearchIcon,
+    ClearIcon,
+    CheckIcon,
+    AddIcon,
+    VisibilityIcon,
+    VisibilityOffIcon,
+    InfoIcon,
+    CardInfoModal,
   },
   data: () => ({
     search: '',
     cards: [],
     newCard: { text: '', translation: '' },
     cardErrors: {},
+    modalCardId: null,
   }),
   computed: {
     filteredCards() {
