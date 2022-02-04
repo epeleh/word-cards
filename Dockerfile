@@ -6,7 +6,7 @@ COPY . .
 RUN bundle config --global frozen 1
 RUN bundle install --without development
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -\
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
   && apt-get update -qq && apt-get install -qq --no-install-recommends nodejs \
   && apt-get upgrade -qq \
   && apt-get clean \
