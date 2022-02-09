@@ -59,8 +59,10 @@ export default {
   methods: {
     onKeyup(e) {
       if (typeof this.card?.id !== 'number') return;
-      if (e.key === 'ArrowLeft') this.onForgetClick();
-      else if (e.key === 'ArrowRight') this.onRememberClick();
+
+      if (['Space', 'Enter'].includes(e.code)) this.onCardClick();
+      else if (e.code === 'ArrowLeft') this.onForgetClick();
+      else if (e.code === 'ArrowRight') this.onRememberClick();
     },
     onCardClick() { this.inverted = !this.inverted; },
     onForgetClick() { this.nextCard({ remembered: false }); },
