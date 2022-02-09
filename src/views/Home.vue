@@ -25,6 +25,7 @@
         <button @click="onRememberClick()" class="btn remember-btn">
           <div><CheckIcon /></div>
         </button>
+        <div class="placeholder"></div>
       </div>
     </main>
   </div>
@@ -47,11 +48,20 @@ export default {
     inverted: false,
   }),
   async created() {
+    window.addEventListener('keyup', this.onKeyup);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
+  unmounted() {
+    window.removeEventListener('keyup', this.onKeyup);
+  },
   methods: {
+    onKeyup(e) {
+      if (typeof this.card?.id !== 'number') return;
+      if (e.key === 'ArrowLeft') this.onForgetClick();
+      else if (e.key === 'ArrowRight') this.onRememberClick();
+    },
     onCardClick() { this.inverted = !this.inverted; },
     onForgetClick() { this.nextCard({ remembered: false }); },
     onRememberClick() { this.nextCard({ remembered: true }); },
@@ -163,6 +173,15 @@ export default {
     @include side-btn-bg(270deg, #102810);
     &:active { @include side-btn-bg(270deg, #103010); }
     div { right: 0; }
+  }
+
+  .placeholder {
+    position: absolute;
+    height: 100%;
+    width: 25%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
