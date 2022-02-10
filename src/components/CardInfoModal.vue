@@ -1,5 +1,5 @@
 <template>
-  <div @click="closeModal()" class="card-info-modal">
+  <div class="card-info-modal" @click="closeModal()">
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
     <div class="info" v-else-if="typeof card?.id === 'number'">
       <div class="placeholder"></div>
@@ -139,9 +139,9 @@ export default {
 
 .card-info {
   flex: 1;
-  min-width: 360px;;
   border-radius: 16px;
   width: 60%;
+  min-width: 360px;
   max-width: 100vh;
   background-color: #fff;
   box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;

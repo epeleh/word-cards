@@ -51,14 +51,14 @@
           class="card" :class="{ remembered: card.remembered }"
         >
           <div class="card-menu">
-            <button @click="deleteCard(card.id)"><ClearIcon /></button>
+            <button @click="removeModalCardId = card.id"><ClearIcon /></button>
             <button v-if="card.active" @click="updateCard(card.id, { active: false })">
               <VisibilityIcon />
             </button>
             <button v-else @click="updateCard(card.id, { active: true })">
               <VisibilityOffIcon />
             </button>
-            <button @click="modalCardId = card.id"><InfoIcon /></button>
+            <button @click="infoModalCardId = card.id"><InfoIcon /></button>
             <h4>{{`#${card.id}`}}</h4>
           </div>
 
@@ -88,8 +88,13 @@
         </div>
       </div>
 
-      <CardInfoModal v-if="typeof modalCardId === 'number'"
-        :cardId="modalCardId" :closeModal="() => modalCardId = null"
+      <CardInfoModal v-if="typeof infoModalCardId === 'number'"
+        :cardId="infoModalCardId" :closeModal="() => infoModalCardId = null"
+      />
+
+      <CardRemoveModal v-if="typeof removeModalCardId === 'number'"
+        :cardId="removeModalCardId" :closeModal="() => removeModalCardId = null"
+        :deleteCard="deleteCard"
       />
     </main>
   </div>
@@ -108,6 +113,7 @@ import VisibilityOffIcon from '@/assets/visibility_off.svg';
 import InfoIcon from '@/assets/info.svg';
 
 import CardInfoModal from '@/components/CardInfoModal.vue';
+import CardRemoveModal from '@/components/CardRemoveModal.vue';
 
 export default {
   name: 'Edit',
@@ -121,13 +127,15 @@ export default {
     VisibilityOffIcon,
     InfoIcon,
     CardInfoModal,
+    CardRemoveModal,
   },
   data: () => ({
     search: '',
     cards: [],
     newCard: { text: '', translation: '' },
     cardErrors: {},
-    modalCardId: null,
+    infoModalCardId: null,
+    removeModalCardId: null,
   }),
   computed: {
     filteredCards() {

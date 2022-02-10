@@ -196,8 +196,8 @@ export default {
   z-index: 50;
   cursor: pointer;
   border-radius: 16px;
-  width: 60%;
-  max-width: 100vh;
+  width: 60vw;
+  max-width: 60vh;
   background-color: #fff;
   box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
   padding: 0;

@@ -16,6 +16,7 @@ module.exports = {
     'default-case': 'off',
     'no-unused-vars': 'warn',
     'vue/no-unused-components': 'warn',
+    'no-multiple-empty-lines': 'warn',
     'object-curly-spacing': 'warn',
     'arrow-body-style': 'warn',
     'no-multi-spaces': 'warn',
