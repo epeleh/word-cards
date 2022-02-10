@@ -46,7 +46,7 @@
           </button>
         </form>
 
-        <h2 v-if="search && !filteredCards.length" class="no-cards-banner">Nothing found :(</h2>
+        <h2 v-if="search && !filteredCards.length" class="no-card-banner">Nothing found :(</h2>
         <div v-else v-for="card in filteredCards" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
@@ -410,16 +410,5 @@ export default {
       }
     }
   }
-}
-
-.no-cards-banner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #fff;
-  text-shadow: 1px 1px 10px #00000075;
 }
 </style>

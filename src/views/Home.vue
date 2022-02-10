@@ -6,7 +6,7 @@
       </router-link>
     </nav>
     <main>
-      <h2 v-if="card === 404" class="no-cards-banner">You have no active cards :(</h2>
+      <h2 v-if="card === 404" class="no-card-banner">You have no active cards :(</h2>
       <button v-else-if="typeof card?.id === 'number'"
         @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
@@ -249,16 +249,5 @@ export default {
     max-height: 40vh;
     object-fit: cover;
   }
-}
-
-.no-cards-banner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #fff;
-  text-shadow: 1px 1px 10px #00000075;
 }
 </style>
