@@ -8,5 +8,13 @@ module.exports = {
       .end()
       .use('vue-svg-loader')
       .loader('vue-svg-loader');
+
+    config.optimization.minimizer('terser').tap((args) => {
+      args[0].terserOptions.output = { // eslint-disable-line no-param-reassign
+        ...args[0].terserOptions.output,
+        comments: false,
+      };
+      return args;
+    });
   },
 };
