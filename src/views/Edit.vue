@@ -9,8 +9,9 @@
     <header class="header-bar">
       <div class="search">
         <SearchIcon class="search-icon" />
-        <input type="text" name="search" placeholder="search" class="search-input"
+        <input type="text" name="search" placeholder="search"
           :value="search" @input="(e) => search = e.target.value"
+          autocomplete="off" class="search-input"
         >
         <button @click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
           <ClearIcon v-if="search" />
