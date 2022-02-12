@@ -226,14 +226,14 @@ export default {
     display: inline-block;
     right: 0;
     margin: 14px 8px;
-    text-shadow: 2px 2px 6px #000, 0 0 1px #000;
+    text-shadow: 2px 2px 6px #888, 0 0 1px #000;
+    color: #ffe5de;
     transition: color 1s;
-    color: #ffddd4;
     font-size: 20px;
   }
 
   &.remembered h4 {
-    color: #ddffd4;
+    color: #e5ffde;
   }
 
   p {

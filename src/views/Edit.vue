@@ -335,8 +335,8 @@ export default {
 
       h4 {
         float: right;
-        text-shadow: 2px 2px 6px #000, 0 0 1px #000;
-        color: #ffddd4;
+        text-shadow: 2px 2px 6px #888, 0 0 1px #000;
+        color: #ffe5de;
         font-size: 20px;
         padding: 0 8px;
         margin: -2px 0 0;
@@ -345,7 +345,7 @@ export default {
     }
 
     &.remembered .card-menu h4 {
-      color: #ddffd4;
+      color: #e5ffde;
     }
 
     .text-input,
