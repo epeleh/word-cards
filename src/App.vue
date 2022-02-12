@@ -9,7 +9,7 @@
 
 body {
   margin: 0;
-  background-color: #181818;
+  background-color: #2e2e2e;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }

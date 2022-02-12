@@ -5,7 +5,7 @@
       <div class="placeholder"></div>
 
       <div class="card-remove" @click.stop :class="{ remembered: card.remembered }">
-        <h4>{{`#${card.id}`}}</h4>
+        <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
         <p class="message">Are you sure want to delete the card?</p>
         <button class="btn no-btn" @click="closeModal()">No</button>
         <button class="btn yes-btn" @click="deleteCard(cardId); closeModal()">Yes</button>
@@ -73,7 +73,7 @@ export default {
   max-width: 100vh;
   background-color: #fff;
   box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
-  padding: 0;
+  padding: 0 0 2px;
   overflow: hidden;
   font-size: 150%;
   border: none;
@@ -88,8 +88,8 @@ export default {
 
   h4 {
     float: right;
-    text-shadow: 2px 2px 6px #000;
-    color: #ff7171;
+    text-shadow: 2px 2px 6px #000, 0 0 1px #000;
+    color: #ffddd4;
     font-size: 20px;
     padding: 0 8px;
     margin: 2px 2px -12px;
@@ -97,7 +97,7 @@ export default {
   }
 
   &.remembered h4 {
-    color: #7ae85c;
+    color: #ddffd4;
   }
 
   .message {

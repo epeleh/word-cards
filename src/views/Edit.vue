@@ -52,15 +52,15 @@
           class="card" :class="{ remembered: card.remembered }"
         >
           <div class="card-menu">
-            <button @click="removeModalCardId = card.id"><ClearIcon /></button>
-            <button v-if="card.active" @click="updateCard(card.id, { active: false })">
+            <button title="remove" @click="removeModalCardId = card.id"><ClearIcon /></button>
+            <button title="hide" v-if="card.active" @click="updateCard(card.id, { active: false })">
               <VisibilityIcon />
             </button>
-            <button v-else @click="updateCard(card.id, { active: true })">
+            <button title="show" v-else @click="updateCard(card.id, { active: true })">
               <VisibilityOffIcon />
             </button>
-            <button @click="infoModalCardId = card.id"><InfoIcon /></button>
-            <h4>{{`#${card.id}`}}</h4>
+            <button title="info" @click="infoModalCardId = card.id"><InfoIcon /></button>
+            <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
           </div>
 
           <div>
@@ -270,7 +270,7 @@ export default {
 
     .search-input {
       flex: 1;
-      border-radius: 8px;
+      border-radius: 14px;
       text-align: center;
       height: 22px;
       max-width: calc(84vw - 120px);
@@ -302,7 +302,7 @@ export default {
     background-color: #fff;
     border-radius: 16px;
     box-shadow: 4px 4px 2px #0f0f0f, inset 0 0 15px #9b9b9b;
-    padding: 0;
+    padding: 0 0 4px;
     overflow: hidden;
     font-size: 150%;
     border: none;
@@ -335,8 +335,8 @@ export default {
 
       h4 {
         float: right;
-        text-shadow: 2px 2px 6px #000;
-        color: #ff7171;
+        text-shadow: 2px 2px 6px #000, 0 0 1px #000;
+        color: #ffddd4;
         font-size: 20px;
         padding: 0 8px;
         margin: -2px 0 0;
@@ -345,7 +345,7 @@ export default {
     }
 
     &.remembered .card-menu h4 {
-      color: #7ae85c;
+      color: #ddffd4;
     }
 
     .text-input,
@@ -367,7 +367,7 @@ export default {
       position: absolute;
       height: 28px;
       width: 28px;
-      margin: 4px;
+      margin: 4px 5px;
       cursor: pointer;
 
       svg {
@@ -375,7 +375,7 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(1.1);
-        fill: #ff7171;
+        fill: #ff9f85;
         background-color: #fff;
         border-radius: 50%;
       }
@@ -389,25 +389,25 @@ export default {
     margin: 10px auto;
     box-shadow: 2px 2px 2px #8f8f8f, inset 0 0 12px #9b9b9b;
     border-radius: 6px;
-    cursor: pointer;
     fill: #646464;
     background-color: #fff;
+    opacity: 0.6;
     transition: opacity 1s, background-color 0.2s;
+    cursor: pointer;
 
     &:disabled {
-      cursor: not-allowed;
       opacity: 0.2;
+      cursor: not-allowed;
     }
 
     &:not(:disabled) {
+      background-color: #e5ffde;
+
+      &:active,
       &:focus,
       &:hover {
-        background-color: #e5ffde;
-      }
-
-      &:active {
-        box-shadow: 2px 2px 2px #aaa, inset 0 0 12px #9b9b9b;
-        background-color: #d2ffc6;
+        opacity: 1;
+        background-color: #ddffd4;
       }
     }
   }

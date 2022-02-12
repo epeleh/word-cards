@@ -10,7 +10,7 @@
         <div class="card-menu">
           <VisibilityIcon v-if="card.active" />
           <VisibilityOffIcon v-else />
-          <h4>{{`#${card.id}`}}</h4>
+          <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
         </div>
 
         <p>{{card.text}}</p>
@@ -169,8 +169,8 @@ export default {
 
     h4 {
       float: right;
-      text-shadow: 2px 2px 6px #000;
-      color: #ff7171;
+      text-shadow: 2px 2px 6px #000, 0 0 1px #000;
+      color: #ffddd4;
       font-size: 20px;
       line-height: normal;
       padding: 0 8px;
@@ -180,7 +180,7 @@ export default {
   }
 
   &.remembered .card-menu h4 {
-    color: #7ae85c;
+    color: #ddffd4;
   }
 
   p {

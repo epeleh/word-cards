@@ -11,7 +11,7 @@
         @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
-        <h4>{{`#${card.id}`}}</h4>
+        <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
         <p v-if="inverted">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
         <img v-if="inverted && card.image_path !== null"
@@ -147,13 +147,13 @@ export default {
 
   @mixin side-btn-bg($deg, $color) {
     background:
-      linear-gradient($deg + 12, $color 20%, transparent 50%),
-      linear-gradient($deg + 8 , $color 10%, transparent 40%),
-      linear-gradient($deg + 4 , $color 10%, transparent 40%),
+      linear-gradient($deg + 14, $color 20%, transparent 50%),
+      linear-gradient($deg + 10, $color 10%, transparent 40%),
+      linear-gradient($deg + 6 , $color 10%, transparent 30%),
       linear-gradient($deg     , $color 0% , transparent 30%),
-      linear-gradient($deg - 4 , $color 10%, transparent 40%),
-      linear-gradient($deg - 8 , $color 10%, transparent 40%),
-      linear-gradient($deg - 12, $color 20%, transparent 50%);
+      linear-gradient($deg - 6 , $color 10%, transparent 30%),
+      linear-gradient($deg - 10, $color 10%, transparent 40%),
+      linear-gradient($deg - 14, $color 20%, transparent 50%);
   }
 
   .btn div {
@@ -166,14 +166,14 @@ export default {
   }
 
   .forget-btn {
-    @include side-btn-bg(90deg, #281010);
-    &:active { @include side-btn-bg(90deg, #301010); }
+    @include side-btn-bg(90deg, #ffa9a908);
+    &:active { @include side-btn-bg(90deg, #ffa9a90a); }
     div { left: 0; }
   }
 
   .remember-btn {
-    @include side-btn-bg(270deg, #102810);
-    &:active { @include side-btn-bg(270deg, #103010); }
+    @include side-btn-bg(270deg, #a9ffa908);
+    &:active { @include side-btn-bg(270deg, #a9ffa90a); }
     div { right: 0; }
   }
 
@@ -226,14 +226,14 @@ export default {
     display: inline-block;
     right: 0;
     margin: 14px 8px;
-    text-shadow: 2px 2px 6px #000;
+    text-shadow: 2px 2px 6px #000, 0 0 1px #000;
     transition: color 1s;
-    color: #ff7171;
+    color: #ffddd4;
     font-size: 20px;
   }
 
   &.remembered h4 {
-    color: #7ae85c;
+    color: #ddffd4;
   }
 
   p {
