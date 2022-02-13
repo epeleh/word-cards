@@ -7,4 +7,9 @@ module.exports = {
     '**/__tests__/*.[jt]s?(x)',
     '**/tests/**/*.spec.[jt]s?(x)',
   ],
+  collectCoverage: true,
+  collectCoverageFrom: [
+    'src/**/*.vue',
+  ],
+  verbose: true,
 };
