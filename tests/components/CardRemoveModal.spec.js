@@ -1,5 +1,4 @@
 import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import CardRemoveModal from '@/components/CardRemoveModal.vue';
 
 describe('CardRemoveModal.vue', () => {
@@ -17,8 +16,6 @@ describe('CardRemoveModal.vue', () => {
           deleteCard: global.deleteCard = jest.fn(),
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {
@@ -60,8 +57,6 @@ describe('CardRemoveModal.vue', () => {
           deleteCard: global.deleteCard = jest.fn(),
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {

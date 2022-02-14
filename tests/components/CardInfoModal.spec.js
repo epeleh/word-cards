@@ -1,5 +1,4 @@
 import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import CardInfoModal from '@/components/CardInfoModal.vue';
 
 describe('CardInfoModal.vue', () => {
@@ -20,8 +19,6 @@ describe('CardInfoModal.vue', () => {
           closeModal: global.closeModal = jest.fn(),
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {
@@ -66,8 +63,6 @@ describe('CardInfoModal.vue', () => {
           closeModal: global.closeModal = jest.fn(),
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {
@@ -85,7 +80,7 @@ describe('CardInfoModal.vue', () => {
     });
 
     it('displays the correct text and translation', () => {
-      expect(wrapper.findAll('div.card-info.remembered > p').map((el) => el.text())).toEqual(
+      expect(wrapper.findAll('div.card-info.remembered > p').map((x) => x.text())).toEqual(
         ['some text', 'some translation'],
       );
     });

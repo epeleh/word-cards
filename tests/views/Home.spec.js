@@ -1,6 +1,5 @@
 import { nextTick } from 'vue';
 import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import Home from '@/views/Home.vue';
 
 describe('Home.vue', () => {
@@ -16,8 +15,6 @@ describe('Home.vue', () => {
           stubs: ['router-link', 'EditIcon', 'ClearIcon', 'CheckIcon', 'DescriptionIcon'],
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {
@@ -57,8 +54,6 @@ describe('Home.vue', () => {
           stubs: ['router-link', 'EditIcon', 'ClearIcon', 'CheckIcon', 'DescriptionIcon'],
         },
       });
-
-      await flushPromises();
     });
 
     it('renders', () => {
