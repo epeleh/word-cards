@@ -57,17 +57,17 @@ describe('Edit.vue', () => {
     });
 
     it('allows to create a card', async () => {
-      expect('disabled' in wrapper.find('form.create-card button.add-btn').attributes()).toBe(true);
+      expect('disabled' in wrapper.find('.create-card button.add-btn').attributes()).toBe(true);
 
       wrapper.find('form.create-card input[name="text"]').setValue('new text');
       await nextTick();
 
-      expect('disabled' in wrapper.find('form.create-card button.add-btn').attributes()).toBe(true);
+      expect('disabled' in wrapper.find('.create-card button.add-btn').attributes()).toBe(true);
 
       wrapper.find('form.create-card input[name="translation"]').setValue('new translation');
       await nextTick();
 
-      expect('disabled' in wrapper.find('form.create-card button.add-btn').attributes()).toBe(false);
+      expect('disabled' in wrapper.find('.create-card button.add-btn').attributes()).toBe(false);
 
       global.fetch = jest.fn(() => Promise.resolve({ status: 201, json: () => 'response data' }));
       wrapper.find('form.create-card').trigger('submit');

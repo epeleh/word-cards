@@ -9,10 +9,15 @@
     <header class="header-bar">
       <div class="search">
         <SearchIcon class="search-icon" />
-        <input type="text" name="search" placeholder="search"
-          :value="search" @input="(e) => search = e.target.value"
-          autocomplete="off" class="search-input"
-        >
+        <div class="search-input-wrapper">
+          <input type="text" name="search" placeholder="search"
+            :value="search" @input="(e) => search = e.target.value"
+            autocomplete="off" class="search-input"
+          >
+          <p v-if="search" class="count" :title="`${filteredCards.length} / ${cards.length}`">
+            {{ filteredCards.length }} / {{ cards.length }}
+          </p>
+        </div>
         <button @click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
           <ClearIcon v-if="search" />
         </button>
@@ -141,11 +146,15 @@ export default {
   computed: {
     filteredCards() {
       return _.orderBy(
-        this.cards.filter(({ id, text, translation }) => (
-          `#${id}`.toLowerCase().includes(this.search.toLowerCase())
-            || text.toLowerCase().includes(this.search.toLowerCase())
-            || translation.toLowerCase().includes(this.search.toLowerCase())
-        )),
+        this.cards.filter((card) => {
+          const search = this.search.toLowerCase();
+          return `#${card.id}`.includes(search)
+            || card.text.toLowerCase().includes(search)
+            || card.translation.toLowerCase().includes(search)
+            || `#${card.active ? 'active' : 'inactive'}`.includes(search)
+            || `#${card.image_path ? 'image' : 'noimage'}`.includes(search)
+            || `#${card.remembered ? 'remembered' : 'unremembered'}`.includes(search);
+        }),
         ['active', 'met_at', 'id'], ['desc', 'desc', 'asc'],
       );
     },
@@ -268,14 +277,33 @@ export default {
       min-width: 24px;
     }
 
-    .search-input {
+    .search-input-wrapper {
       flex: 1;
+      position: relative;
+      min-width: 184px;
+      max-width: calc(84vw - 120px);
+    }
+
+    .search-input {
       border-radius: 14px;
       text-align: center;
+      width: calc(100% - 8px);
       height: 22px;
-      max-width: calc(84vw - 120px);
       text-shadow: 1px 1px 2px #cdcdcd;
       box-shadow: 4px 4px 12px #0f0f0f, inset 0 0 4px #9b9b9b;
+    }
+
+    .count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateY(-100%);
+      margin: 2px 10px;
+      opacity: 0.6;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: default;
     }
 
     .search-btn {

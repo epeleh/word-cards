@@ -29,9 +29,19 @@ export default {
     card: null,
   }),
   async created() {
+    window.addEventListener('keyup', this.onKeyup);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
+  },
+  unmounted() {
+    window.removeEventListener('keyup', this.onKeyup);
+  },
+  methods: {
+    onKeyup(e) {
+      if (e.code === 'Enter') this.deleteCard(this.cardId);
+      if (['Enter', 'Escape'].includes(e.code)) this.closeModal();
+    },
   },
 };
 </script>

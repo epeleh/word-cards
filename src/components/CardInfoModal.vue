@@ -64,11 +64,18 @@ export default {
     deleteImageBtnHover: false,
   }),
   async created() {
+    window.addEventListener('keyup', this.onKeyup);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
+  unmounted() {
+    window.removeEventListener('keyup', this.onKeyup);
+  },
   methods: {
+    onKeyup(e) {
+      if (e.code === 'Escape') this.closeModal();
+    },
     formatDateText(text) {
       const str = text.substr(0, text.indexOf(':'));
       const date = new Date(text.substr(text.indexOf(':') + 1));
