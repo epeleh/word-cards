@@ -1,4 +1,3 @@
-import { nextTick } from 'vue';
 import { shallowMount } from '@vue/test-utils';
 import Home from '@/views/Home.vue';
 
@@ -22,12 +21,11 @@ describe('Home.vue', () => {
     });
 
     it('fetches a card by the "next" endpoint', () => {
-      expect(global.fetch.mock.calls.length).toBe(1);
-      expect(global.fetch).toHaveBeenCalledWith('/api/cards/next');
+      expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards/next');
     });
 
     it('displays "no-card-banner" with the correct text', () => {
-      expect(wrapper.find('h2.no-card-banner').text()).toBe('You have no active cards :(');
+      expect(wrapper.get('h2.no-card-banner').text()).toBe('You have no active cards :(');
     });
   });
 
@@ -61,26 +59,24 @@ describe('Home.vue', () => {
     });
 
     it('fetches a card by the "next" endpoint', () => {
-      expect(global.fetch.mock.calls.length).toBe(1);
-      expect(global.fetch).toHaveBeenCalledWith('/api/cards/next');
+      expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards/next');
     });
 
     it('displays the correct card id', () => {
-      expect(wrapper.find('button.card h4').text()).toBe('#42');
-      expect(wrapper.find('button.card h4').attributes()).toEqual({ title: '#42' });
+      expect(wrapper.get('button.card h4').text()).toBe('#42');
+      expect(wrapper.get('button.card h4').attributes()).toEqual({ title: '#42' });
     });
 
     it('displays the correct text', () => {
-      expect(wrapper.find('button.card p').text()).toBe('some text');
+      expect(wrapper.get('button.card p').text()).toBe('some text');
     });
 
     it('displays the correct translation', async () => {
       expect(wrapper.vm.inverted).toBe(false);
-      wrapper.find('button.card').trigger('click');
-      await nextTick();
+      await wrapper.get('button.card').trigger('click');
 
       expect(wrapper.vm.inverted).toBe(true);
-      expect(wrapper.find('button.card p').text()).toBe('some translation');
+      expect(wrapper.get('button.card p').text()).toBe('some translation');
     });
   });
 });

@@ -26,12 +26,11 @@ describe('CardInfoModal.vue', () => {
     });
 
     it('fetches a card by the correct id', () => {
-      expect(global.fetch.mock.calls.length).toBe(1);
-      expect(global.fetch).toHaveBeenCalledWith('/api/cards/523');
+      expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards/523');
     });
 
     it('displays "no-card-banner" with the correct text', () => {
-      expect(wrapper.find('h2.no-card-banner').text()).toBe('The card was not found :(');
+      expect(wrapper.get('h2.no-card-banner').text()).toBe('The card was not found :(');
     });
   });
 
@@ -70,13 +69,12 @@ describe('CardInfoModal.vue', () => {
     });
 
     it('fetches a card by the correct id', () => {
-      expect(global.fetch.mock.calls.length).toBe(1);
-      expect(global.fetch).toHaveBeenCalledWith('/api/cards/42');
+      expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards/42');
     });
 
     it('displays the correct card id', () => {
-      expect(wrapper.find('div.card-info.remembered h4').text()).toBe('#42');
-      expect(wrapper.find('div.card-info.remembered h4').attributes()).toEqual({ title: '#42' });
+      expect(wrapper.get('div.card-info.remembered h4').text()).toBe('#42');
+      expect(wrapper.get('div.card-info.remembered h4').attributes()).toEqual({ title: '#42' });
     });
 
     it('displays the correct text and translation', () => {
