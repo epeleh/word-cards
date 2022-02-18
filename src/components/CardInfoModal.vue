@@ -28,8 +28,8 @@
             <SaveIcon />
             <p>Upload an image</p>
           </div>
-          <img v-if="card.image_path !== null" class="upload-img"
-            :src="backendUrl + card.image_path" alt="Word image"
+          <img v-if="card.image_path !== null" class="upload-img" alt="Word image"
+            :src="`${backendUrl}${card.image_path}?${new Date(card.updated_at).getTime()}`"
           />
         </div>
       </div>

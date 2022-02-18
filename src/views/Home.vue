@@ -7,15 +7,15 @@
     </nav>
     <main>
       <h2 v-if="card === 404" class="no-card-banner">You have no active cards :(</h2>
-      <button v-else-if="typeof card?.id === 'number'"
+      <button v-else-if="typeof card?.id === 'number'" @keypress.prevent
         @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
         <p v-if="inverted">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
-        <img v-if="inverted && card.image_path !== null"
-          :src="backendUrl + card.image_path" alt="Word image"
+        <img v-if="inverted && card.image_path !== null" alt="Word image"
+          :src="`${backendUrl}${card.image_path}?${new Date(card.updated_at).getTime()}`"
         />
       </button>
       <div class="side-btns" v-if="typeof card?.id === 'number'">
@@ -59,6 +59,7 @@ export default {
   methods: {
     onKeyup(e) {
       if (typeof this.card?.id !== 'number') return;
+      e.preventDefault();
 
       if (['Space', 'Enter'].includes(e.code)) this.onCardClick();
       else if (e.code === 'ArrowLeft') this.onForgetClick();

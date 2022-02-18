@@ -41,7 +41,7 @@ DB[:cards].exclude(image_path: nil).select_map(:id).then do |image_card_ids|
     id: image_card_ids - Dir[File.join(__dir__, 'storage', 'card_*.*')].map do |image|
       File.basename(image, File.extname(image)).delete_prefix('card_').to_i
     end
-  ).update(image_path: nil)
+  ).update(image_path: nil, updated_at: Time.now.utc)
 end
 
 # ===================================================== Rest API ===================================================== #
@@ -133,7 +133,9 @@ namespace '/api' do
       dist = File.join(__dir__, 'storage', "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
       FileUtils.cp(params.dig('image', 'tempfile').path, dist)
 
-      halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: "/storage/#{File.basename(dist)}") == 1
+      halt(500) unless DB[:cards].where(id: params[:id]).update(
+        image_path: "/storage/#{File.basename(dist)}", updated_at: Time.now.utc
+      ) == 1
 
       File.delete(
         *Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")].reject do |image|
@@ -178,7 +180,7 @@ namespace '/api' do
     delete '/:id/image' do
       halt(404) if DB[:cards].exclude(image_path: nil).where(id: params[:id]).empty?
 
-      halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: nil) == 1
+      halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: nil, updated_at: Time.now.utc) == 1
       File.delete(*Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")])
 
       DB[:cards][id: params[:id]].to_json
