@@ -63,7 +63,19 @@ describe('Edit.vue', () => {
       await wrapper.get('form.create-card input[name="translation"]').setValue('new translation');
       expect(wrapper.get('.create-card .add-btn').attributes()).not.toHaveProperty('disabled');
 
-      global.fetch = jest.fn(() => Promise.resolve({ status: 201, json: () => 'response data' }));
+      const newCard = {
+        id: 91,
+        text: 'some text 3',
+        translation: 'some translation 3',
+        image_path: null,
+        met_at: '2022-02-14 18:22:59 UTC',
+        remembered: false,
+        active: true,
+        created_at: '2022-02-14 18:22:59 UTC',
+        updated_at: '2022-02-14 18:22:59 UTC',
+      };
+
+      global.fetch = jest.fn(() => Promise.resolve({ status: 201, json: () => newCard }));
       await wrapper.get('form.create-card').trigger('submit');
 
       expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards', {
@@ -72,7 +84,7 @@ describe('Edit.vue', () => {
 
       await flushPromises();
       expect(wrapper.vm.newCard).toEqual({ text: '', translation: '' });
-      expect(wrapper.vm.cards.at(-1)).toBe('response data');
+      expect(wrapper.vm.cards.at(-1)).toEqual(newCard);
     });
 
     it('allows to remove a card', async () => {

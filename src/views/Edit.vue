@@ -146,15 +146,17 @@ export default {
   computed: {
     filteredCards() {
       return _.orderBy(
-        this.cards.filter((card) => {
-          const search = this.search.toLowerCase();
-          return `#${card.id}`.includes(search)
-            || card.text.toLowerCase().includes(search)
-            || card.translation.toLowerCase().includes(search)
-            || `#${card.active ? 'active' : 'inactive'}`.includes(search)
-            || `#${card.image_path ? 'image' : 'noimage'}`.includes(search)
-            || `#${card.remembered ? 'remembered' : 'unremembered'}`.includes(search);
-        }),
+        this.cards.filter((card) => (
+          this.search.toLowerCase().trim().startsWith('#') ? [
+            `#${card.id}.`,
+            `#${card.active ? 'active' : 'inactive'}.`,
+            `#${card.image_path ? 'image' : 'noimage'}.`,
+            `#${card.remembered ? 'remembered' : 'unremembered'}.`,
+          ] : [
+            card.text.toLowerCase(),
+            card.translation.toLowerCase(),
+          ]
+        ).some((x) => x.includes(this.search.toLowerCase().trim()))),
         ['active', 'met_at', 'id'], ['desc', 'desc', 'asc'],
       );
     },
