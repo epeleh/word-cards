@@ -11,7 +11,11 @@ describe('Home.vue', () => {
       wrapper = shallowMount(Home, {
         global: {
           provide: { backendUrl: '' },
-          stubs: ['router-link', 'EditIcon', 'ClearIcon', 'CheckIcon', 'DescriptionIcon'],
+          stubs: [
+            'router-link',
+            'RefreshIcon', 'RefreshDescriptionIcon', 'EditIcon',
+            'ClearIcon', 'CheckIcon', 'DescriptionIcon',
+          ],
         },
       });
     });
@@ -49,7 +53,11 @@ describe('Home.vue', () => {
       wrapper = shallowMount(Home, {
         global: {
           provide: { backendUrl: '' },
-          stubs: ['router-link', 'EditIcon', 'ClearIcon', 'CheckIcon', 'DescriptionIcon'],
+          stubs: [
+            'router-link',
+            'RefreshIcon', 'RefreshDescriptionIcon', 'EditIcon',
+            'ClearIcon', 'CheckIcon', 'DescriptionIcon',
+          ],
         },
       });
     });

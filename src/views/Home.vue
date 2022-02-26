@@ -1,6 +1,10 @@
 <template>
   <div class="home-page">
     <nav class="nav-bar">
+      <button class="btn nav-btn reverse-btn" @click="pendingReverseMode = !pendingReverseMode">
+        <RefreshDescriptionIcon v-if="pendingReverseMode" />
+        <RefreshIcon v-else />
+      </button>
       <router-link to="/edit" class="btn nav-btn">
         <EditIcon />
       </router-link>
@@ -12,7 +16,7 @@
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
-        <p v-if="inverted">{{card.translation}}</p>
+        <p v-if="(inverted && !reverseMode) || (!inverted && reverseMode)">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
         <img v-if="inverted && card.image_path !== null" alt="Word image"
           :src="`${backendUrl}${card.image_path}?${new Date(card.updated_at).getTime()}`"
@@ -32,7 +36,10 @@
 </template>
 
 <script>
+import RefreshIcon from '@/assets/refresh.svg';
+import RefreshDescriptionIcon from '@/assets/refresh_description.svg';
 import EditIcon from '@/assets/edit.svg';
+
 import ClearIcon from '@/assets/clear.svg';
 import CheckIcon from '@/assets/check.svg';
 import DescriptionIcon from '@/assets/description.svg';
@@ -41,13 +48,24 @@ export default {
   name: 'Home',
   inject: ['backendUrl'],
   components: {
-    EditIcon, ClearIcon, CheckIcon, DescriptionIcon,
+    RefreshIcon, RefreshDescriptionIcon, EditIcon, ClearIcon, CheckIcon, DescriptionIcon,
   },
   data: () => ({
     card: null,
     inverted: false,
+    reverseMode: false,
+    pendingReverseMode: false,
   }),
+  watch: {
+    pendingReverseMode(newValue) {
+      if (newValue) localStorage.setItem('home/reverseMode', newValue);
+      else localStorage.removeItem('home/reverseMode');
+    },
+  },
   async created() {
+    this.pendingReverseMode = !!localStorage.getItem('home/reverseMode');
+    this.reverseMode = this.pendingReverseMode;
+
     window.addEventListener('keyup', this.onKeyup);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
       (x) => (x.ok ? x.json() : x.status),
@@ -90,7 +108,9 @@ export default {
       this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
         (x) => (x.ok ? x.json() : x.status),
       );
+
       this.inverted = false;
+      this.reverseMode = this.pendingReverseMode;
     },
   },
 };
@@ -125,7 +145,7 @@ export default {
     position: relative;
     transform: translateY(-50%) scale(1.5);
     cursor: pointer;
-    margin: 50% auto 0;
+    margin: 50% auto;
     fill: #fff;
   }
 }
@@ -139,6 +159,10 @@ export default {
   cursor: default;
   z-index: 100;
   right: 0;
+
+  &.reverse-btn {
+    left: 0;
+  }
 }
 
 .side-btns {

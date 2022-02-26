@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<g id="refresh_24px">
+<path id="icon/navigation/refresh_24px" d="M17.645 6.35C16.195 4.9 14.205 4 11.995 4 7.575 4 4.005 7.58 4.005 12 4.005 16.42 7.575 20 11.995 20 12 18 12 20 11.995 18 8.685 18 5.995 15.31 5.995 12 5.995 8.69 8.685 6 11.995 6 13.655 6 15.135 6.69 16.215 7.78L12.995 11H19.995V4L17.645 6.35Z" fill="black" />
+</g>
+<g id="description_24px" transform="scale(0.42) translate(32 32)">
+<path id="icon/action/description_24px" fill-rule="evenodd" clip-rule="evenodd" d="M14 2H6C4.90002 2 4 2.89999 4 4V20C4 21.1 4.89001 22 5.98999 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 12H8V14H16V12ZM16 16H8V18H16V16ZM6 20H18V9H13V4H6V20Z" fill="black" />
+</g>
+</svg>

@@ -240,7 +240,7 @@ export default {
     position: relative;
     transform: translateY(-50%) scale(1.5);
     cursor: pointer;
-    margin: 50% auto 0;
+    margin: 50% auto;
     fill: #fff;
   }
 }
