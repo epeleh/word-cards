@@ -48,6 +48,7 @@ end
 
 require 'sinatra'
 require 'sinatra/namespace'
+require 'archive/zip'
 
 set :public_folder, File.join(__dir__, 'dist')
 
@@ -193,13 +194,23 @@ namespace '/api' do
     end
   end
 
-  get '*' do
-    halt 404
-  end
+  get('*') { halt 404 }
 end
 
-get '/storage/:filename' do
-  send_file File.join(__dir__, 'storage', params[:filename])
+namespace '/storage' do
+  get '/:filename' do
+    path = File.join(__dir__, 'storage', params[:filename])
+    halt 404 unless Pathname(path).file?
+    send_file path
+  end
+
+  get '.zip' do
+    zipfile = File.join(Dir.mktmpdir, "storage-#{Time.now.utc.strftime('%Y%m%d%H%M%S')}.zip")
+    Archive::Zip.archive(zipfile, File.join(__dir__, 'storage'))
+    send_file zipfile, filename: File.basename(zipfile)
+  end
+
+  get('*') { halt 404 }
 end
 
 get '/*' do
