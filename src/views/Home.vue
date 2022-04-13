@@ -66,16 +66,16 @@ export default {
     this.pendingReverseMode = !!localStorage.getItem('home/reverseMode');
     this.reverseMode = this.pendingReverseMode;
 
-    window.addEventListener('keyup', this.onKeyup);
+    window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
   unmounted() {
-    window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
-    onKeyup(e) {
+    onKeyUp(e) {
       if (typeof this.card?.id !== 'number') return;
       e.preventDefault();
 

@@ -64,16 +64,16 @@ export default {
     deleteImageBtnHover: false,
   }),
   async created() {
-    window.addEventListener('keyup', this.onKeyup);
+    window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
   unmounted() {
-    window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
-    onKeyup(e) {
+    onKeyUp(e) {
       if (e.code === 'Escape') this.closeModal();
     },
     formatDateText(text) {
@@ -283,7 +283,7 @@ export default {
   list-style-type: none;
   padding: 0;
   opacity: 0.6;
-  text-shadow: 0 0 15px #fff;
+  text-shadow: 0 0 15px #fff, 0 0 10px #fff, 0 0 5px #fff;
   font-weight: bold;
   cursor: default;
 

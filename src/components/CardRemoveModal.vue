@@ -29,16 +29,16 @@ export default {
     card: null,
   }),
   async created() {
-    window.addEventListener('keyup', this.onKeyup);
+    window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
   unmounted() {
-    window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
-    onKeyup(e) {
+    onKeyUp(e) {
       if (e.code === 'Enter') this.deleteCard(this.cardId);
       if (['Enter', 'Escape'].includes(e.code)) this.closeModal();
     },

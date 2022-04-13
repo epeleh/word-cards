@@ -49,6 +49,7 @@ end
 require 'sinatra'
 require 'sinatra/namespace'
 require 'archive/zip'
+require 'pry' if settings.development?
 
 set :public_folder, File.join(__dir__, 'dist')
 
@@ -154,10 +155,10 @@ namespace '/api' do
       current_time = Time.now.utc
       attributes = { 'met_at' => current_time, 'created_at' => current_time, 'updated_at' => current_time }.merge(
         JSON.parse(request.body.tap(&:rewind).read).slice('text', 'translation', 'met_at', 'remembered', 'active')
-      )
+      ).transform_keys(&:to_sym)
 
-      attributes['text'].strip!
-      attributes['translation'].strip!
+      attributes[:text].strip!
+      attributes[:translation].strip!
 
       status 201
       DB[:cards][id: DB[:cards].insert(attributes)].to_json
@@ -167,12 +168,16 @@ namespace '/api' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
       validate_card_body!
 
-      attributes = { 'updated_at' => Time.now.utc }.merge(
-        JSON.parse(request.body.tap(&:rewind).read).slice('text', 'translation', 'met_at', 'remembered', 'active')
-      )
+      attributes = JSON.parse(request.body.tap(&:rewind).read).slice(
+        'text', 'translation', 'met_at', 'remembered', 'active'
+      ).transform_keys(&:to_sym)
 
-      attributes['text'].strip!
-      attributes['translation'].strip!
+      attributes[:translation].strip!
+      attributes[:text].strip!
+
+      attributes.merge!(updated_at: Time.now.utc) if DB[:cards].where(
+        attributes.slice(:text, :translation, :active).merge(id: params[:id])
+      ).empty?
 
       halt(500) unless DB[:cards].where(id: params[:id]).update(attributes) == 1
       DB[:cards][id: params[:id]].to_json

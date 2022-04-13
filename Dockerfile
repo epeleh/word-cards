@@ -19,4 +19,4 @@ RUN rm -rf .browserslistrc .eslintrc.js babel.config.js \
   node_modules/ package-lock.json package.json public/ src/
 
 EXPOSE 80
-CMD ["bundle", "exec", "./server.rb", "-e", "production", "-p", "80"]
+CMD ["bundle", "exec", "./server.rb", "-e", "production", "-p", "80", "-x"]
