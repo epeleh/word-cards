@@ -39,8 +39,8 @@ export default {
   },
   methods: {
     onKeyUp(e) {
-      if (e.code === 'Enter') this.deleteCard(this.cardId);
-      if (['Enter', 'Escape'].includes(e.code)) this.closeModal();
+      if (['Enter', 'Delete'].includes(e.code)) this.deleteCard(this.cardId);
+      if (['Enter', 'Delete', 'Escape'].includes(e.code)) this.closeModal();
     },
   },
 };

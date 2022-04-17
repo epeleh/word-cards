@@ -14,7 +14,9 @@
             :value="search" @input="(e) => search = e.target.value"
             autocomplete="off" class="search-input"
           >
-          <p v-if="search" class="count" :title="`${filteredCards.length} / ${cards.length}`">
+          <p v-if="cards !== null && search" class="count"
+            :title="`${filteredCards.length} / ${cards.length}`"
+          >
             {{ filteredCards.length }} / {{ cards.length }}
           </p>
         </div>
@@ -26,7 +28,9 @@
 
     <main>
       <div class="cards">
-        <form v-if="!search" @submit.prevent="createCard" class="card create-card">
+        <form v-if="cards !== null && !search" @submit.prevent="createCard"
+          class="card create-card"
+        >
           <div>
             <div class="errors-info" v-if="cardErrors[0]?.text"
               :title="cardErrors[0].text.join('\n')"
@@ -52,7 +56,9 @@
           </button>
         </form>
 
-        <h2 v-if="search && !filteredCards.length" class="no-card-banner">Nothing found :(</h2>
+        <h2 v-if="cards !== null && search && !filteredCards.length" class="no-card-banner">
+          Nothing found :(
+        </h2>
         <div v-else v-for="card in filteredCards" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
@@ -137,7 +143,7 @@ export default {
   },
   data: () => ({
     search: '',
-    cards: [],
+    cards: null,
     newCard: { text: '', translation: '' },
     cardErrors: {},
     infoModalCardId: null,
@@ -156,7 +162,7 @@ export default {
   computed: {
     filteredCards() {
       return _.orderBy(
-        this.cards.filter((card) => (
+        (this.cards ?? []).filter((card) => (
           this.search.toLowerCase().trim().startsWith('#') ? [
             `#${card.id}.`,
             `#${card.active ? 'active' : 'inactive'}.`,
