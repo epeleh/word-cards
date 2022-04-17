@@ -1,5 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
+import router from '@/router';
 import Edit from '@/views/Edit.vue';
 
 describe('Edit.vue', () => {
@@ -35,9 +36,13 @@ describe('Edit.vue', () => {
         ]),
       }));
 
+      router.push('/edit');
+      await flushPromises();
+
       wrapper = shallowMount(Edit, {
         global: {
           provide: { backendUrl: '' },
+          plugins: [router],
           stubs: [
             'router-link', 'SearchIcon', 'ClearIcon', 'CheckIcon', 'AddIcon',
             'VisibilityIcon', 'VisibilityOffIcon', 'InfoIcon', 'CardInfoModal', 'CardRemoveModal',
@@ -98,6 +103,28 @@ describe('Edit.vue', () => {
       await wrapper.vm.deleteCard(90);
       expect(global.fetch).toHaveBeenCalledTimes(2);
       expect(global.fetch).toHaveBeenLastCalledWith('/api/cards/90', { method: 'DELETE' });
+    });
+
+    it('allows to display a card info', async () => {
+      expect(wrapper.vm.infoModalCardId).toBeNull();
+      expect(wrapper.vm.$route.fullPath).toBe('/edit');
+      expect(wrapper.find('card-info-modal-stub').exists()).toBe(false);
+
+      await wrapper.get('.search input.search-input').setValue('#inactive');
+      await flushPromises();
+      await wrapper.get('div.card div.card-menu button[title="info"]').trigger('click');
+      await flushPromises();
+
+      expect(wrapper.vm.infoModalCardId).toBe(89);
+      expect(wrapper.vm.$route.fullPath).toBe('/edit/89?s=%23inactive');
+      expect(wrapper.find('card-info-modal-stub').exists()).toBe(true);
+
+      wrapper.vm.infoModalCardId = null;
+      await flushPromises();
+
+      expect(wrapper.vm.infoModalCardId).toBeNull();
+      expect(wrapper.vm.$route.fullPath).toBe('/edit?s=%23inactive');
+      expect(wrapper.find('card-info-modal-stub').exists()).toBe(false);
     });
 
     describe('the search bar', () => {

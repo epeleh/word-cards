@@ -8,7 +8,7 @@ const routes = [
     component: Home,
   },
   {
-    path: '/edit',
+    path: '/edit/:cardId(\\d+)?',
     name: 'Edit',
     // route level code-splitting
     // this generates a separate chunk (edit.[hash].js) for this route

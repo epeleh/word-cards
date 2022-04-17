@@ -143,6 +143,16 @@ export default {
     infoModalCardId: null,
     removeModalCardId: null,
   }),
+  watch: {
+    search(newValue) {
+      this.$router.replace(newValue ? { query: { s: newValue } } : {});
+    },
+    infoModalCardId(newValue) {
+      let path = `/${_(this.$route.path).split('/').compact().first()}`;
+      if (newValue) path += `/${newValue}`;
+      this.$router.push({ path, query: this.$route.query });
+    },
+  },
   computed: {
     filteredCards() {
       return _.orderBy(
@@ -162,11 +172,21 @@ export default {
     },
   },
   async created() {
+    window.addEventListener('popstate', this.readUrlParams);
+    this.readUrlParams();
+
     this.cards = await fetch(`${this.backendUrl}/api/cards`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
   },
+  unmounted() {
+    window.removeEventListener('popstate', this.readUrlParams);
+  },
   methods: {
+    readUrlParams() {
+      this.search = this.$route.query.s ?? '';
+      this.infoModalCardId = this.$route.params.cardId ? +this.$route.params.cardId : null;
+    },
     onClearSearchClick() {
       this.search = '';
     },
