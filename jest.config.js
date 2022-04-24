@@ -1,7 +1,8 @@
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest',
+  preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
   transform: {
-    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.js$': 'babel-jest',
+    '^.+\\.vue$': '@vue/vue3-jest',
   },
   testMatch: [
     '**/__tests__/*.[jt]s?(x)',
