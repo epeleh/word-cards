@@ -1,5 +1,6 @@
 *
 
+# Frontend
 !public/
 !src/
 !.browserslistrc
@@ -9,6 +10,7 @@
 !package-lock.json
 !vue.config.js
 
+# Backend
 !.ruby-version
 !Gemfile
 !Gemfile.lock
