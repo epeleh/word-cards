@@ -46,6 +46,7 @@ module.exports = {
     'arrow-parens': 'warn',
     'no-shadow': 'warn',
     indent: 'warn',
+    quotes: 'warn',
     semi: 'warn',
   },
 };

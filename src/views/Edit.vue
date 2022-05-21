@@ -59,7 +59,7 @@
         <h2 v-if="cards !== null && search && !filteredCards.length" class="no-card-banner">
           Nothing found :(
         </h2>
-        <div v-else v-for="card in filteredCards" :key="card.id"
+        <div v-else v-for="card in filteredCards.slice(0, cardsDisplayLimit)" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
         >
           <div class="card-menu">
@@ -144,6 +144,7 @@ export default {
   data: () => ({
     search: '',
     cards: null,
+    cardsDisplayLimit: 0,
     newCard: { text: '', translation: '' },
     cardErrors: {},
     infoModalCardId: null,
@@ -152,6 +153,7 @@ export default {
   watch: {
     search(newValue) {
       this.$router.replace(newValue ? { query: { s: newValue } } : {});
+      this.renderCards();
     },
     infoModalCardId(newValue) {
       let path = `/${_(this.$route.path).split('/').compact().first()}`;
@@ -184,11 +186,19 @@ export default {
     this.cards = await fetch(`${this.backendUrl}/api/cards`).then(
       (x) => (x.ok ? x.json() : x.status),
     );
+    this.renderCards();
   },
   unmounted() {
     window.removeEventListener('popstate', this.readUrlParams);
   },
   methods: {
+    renderCards(restart = true) {
+      if (restart) this.cardsDisplayLimit = 0;
+      this.cardsDisplayLimit += 10;
+
+      if (this.cardsDisplayLimit >= this.filteredCards.length) return;
+      setTimeout(() => { this.renderCards(false); }, 0);
+    },
     readUrlParams() {
       this.search = this.$route.query.s ?? '';
       this.infoModalCardId = this.$route.params.cardId ? +this.$route.params.cardId : null;
@@ -204,6 +214,7 @@ export default {
       switch (status) {
         case 201:
           this.cards.push(data);
+          this.renderCards(false);
           this.newCard = { text: '', translation: '' };
           delete this.cardErrors[0];
           break;
@@ -352,7 +363,7 @@ export default {
   justify-content: center;
   align-items: baseline;
   gap: 22px;
-  padding: 6px 2% 12px;
+  padding: 6px 2% 2%;
 
   .card {
     background-color: #fff;
