@@ -112,8 +112,10 @@ namespace '/api' do
   end
 
   namespace '/cards' do
+    cards_cache = {}
     get do
-      DB[:cards].all.to_json
+      total_changes = DB.select(Sequel.function(:total_changes)).single_value
+      (cards_cache = cards_cache.slice(total_changes))[total_changes] ||= DB[:cards].all.to_json
     end
 
     get '/next' do
@@ -218,7 +220,7 @@ namespace '/storage' do
   get('*') { halt 404 }
 end
 
-get '/*' do
+get '*' do
   send_file File.join(settings.public_folder, 'index.html')
 end
 
