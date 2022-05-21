@@ -12,6 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: docker-compose build
+    - run: docker images word-cards_app
 
   test:
     runs-on: ubuntu-18.04

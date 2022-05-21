@@ -1,4 +1,4 @@
-# word-cards
+# Word Cards
 
 The application allows you to create cards to memorize new words.
 
