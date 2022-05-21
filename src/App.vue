@@ -7,6 +7,20 @@
   outline: none;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #646464;
+  border: 3px solid #2e2e2e;
+  border-radius: 9999px;
+}
+
+html {
+  overflow-y: overlay;
+}
+
 body {
   margin: 0;
   background-color: #2e2e2e;
