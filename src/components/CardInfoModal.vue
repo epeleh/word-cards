@@ -1,7 +1,8 @@
 <template>
   <div class="card-info-modal" @click="closeModal()">
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
-    <div class="info" v-else-if="typeof card?.id === 'number'">
+    <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
+    <div v-else-if="typeof card?.id === 'number'" class="info">
       <div class="placeholder"></div>
 
       <div class="card-info" @click.stop
@@ -66,7 +67,7 @@ export default {
   async created() {
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
-      (x) => (x.ok ? x.json() : x.status),
+      (x) => (x.ok ? x.json() : x.status), () => 0,
     );
   },
   unmounted() {
@@ -99,14 +100,14 @@ export default {
       this.card = await fetch(
         `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'POST', body: data },
       ).then(
-        (x) => (x.ok ? x.json() : x.status),
+        (x) => (x.ok ? x.json() : x.status), () => 0,
       );
     },
     async deleteImage() {
       this.card = await fetch(
         `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'DELETE' },
       ).then(
-        (x) => (x.ok ? x.json() : x.status),
+        (x) => (x.ok ? x.json() : x.status), () => 0,
       );
 
       this.$refs.uploadImageInput.value = null;

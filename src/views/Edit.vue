@@ -14,7 +14,7 @@
             :value="search" @input="(e) => search = e.target.value"
             autocomplete="off" class="search-input"
           >
-          <p v-if="cards !== null && search" class="count"
+          <p v-if="Array.isArray(cards) && search" class="count"
             :title="`${filteredCards.length} / ${cards.length}`"
           >
             {{ filteredCards.length }} / {{ cards.length }}
@@ -28,7 +28,7 @@
 
     <main>
       <div class="cards">
-        <form v-if="cards !== null && !search" @submit.prevent="createCard"
+        <form v-if="Array.isArray(cards) && !search" @submit.prevent="createCard"
           class="card create-card"
         >
           <div>
@@ -56,8 +56,11 @@
           </button>
         </form>
 
-        <h2 v-if="cards !== null && search && !filteredCards.length" class="no-card-banner">
+        <h2 v-if="Array.isArray(cards) && search && !filteredCards.length" class="no-card-banner">
           Nothing found :(
+        </h2>
+        <h2 v-else-if="typeof cards === 'number'" class="no-card-banner">
+          Something went wrong :(
         </h2>
         <div v-else v-for="card in filteredCards.slice(0, cardsDisplayLimit)" :key="card.id"
           class="card" :class="{ remembered: card.remembered }"
@@ -184,7 +187,7 @@ export default {
     this.readUrlParams();
 
     this.cards = await fetch(`${this.backendUrl}/api/cards`).then(
-      (x) => (x.ok ? x.json() : x.status),
+      (x) => (x.ok ? x.json() : x.status), () => 0,
     );
     this.renderCards();
   },
@@ -209,7 +212,7 @@ export default {
     async createCard() {
       const [data, status] = await fetch(
         `${this.backendUrl}/api/cards`, { method: 'POST', body: JSON.stringify(this.newCard) },
-      ).then(async (x) => ([await x.json(), x.status]));
+      ).then(async (x) => ([await x.json(), x.status]), () => [null, 0]);
 
       switch (status) {
         case 201:
@@ -222,6 +225,9 @@ export default {
         case 400:
           this.cardErrors[0] = data;
           break;
+
+        default:
+          this.cards = status;
       }
     },
     async updateCard(cardId, changes) {
@@ -229,7 +235,7 @@ export default {
 
       const [data, status] = await fetch(
         `${this.backendUrl}/api/cards/${cardId}`, { method: 'PUT', body },
-      ).then(async (x) => ([await x.json(), x.status]));
+      ).then(async (x) => ([await x.json(), x.status]), () => [null, 0]);
 
       switch (status) {
         case 200:
@@ -239,11 +245,19 @@ export default {
         case 400:
           this.cardErrors[cardId] = data;
           break;
+
+        default:
+          this.cards = status;
       }
     },
-    deleteCard(cardId) {
+    async deleteCard(cardId) {
       this.cards = this.cards.filter((x) => x.id !== cardId);
-      fetch(`${this.backendUrl}/api/cards/${cardId}`, { method: 'DELETE' });
+
+      const response = await fetch(
+        `${this.backendUrl}/api/cards/${cardId}`, { method: 'DELETE' },
+      ).catch(() => 0);
+
+      if (!response.ok) this.cards = 0;
     },
   },
 };

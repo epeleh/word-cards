@@ -1,7 +1,8 @@
 <template>
   <div class="card-remove-modal" @click="closeModal()">
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
-    <div class="remove" v-else-if="typeof card?.id === 'number'">
+    <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
+    <div v-else-if="typeof card?.id === 'number'" class="remove">
       <div class="placeholder"></div>
 
       <div class="card-remove" @click.stop :class="{ remembered: card.remembered }">
@@ -31,7 +32,7 @@ export default {
   async created() {
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
-      (x) => (x.ok ? x.json() : x.status),
+      (x) => (x.ok ? x.json() : x.status), () => 0,
     );
   },
   unmounted() {

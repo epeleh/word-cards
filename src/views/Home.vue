@@ -11,6 +11,7 @@
     </nav>
     <main>
       <h2 v-if="card === 404" class="no-card-banner">You have no active cards :(</h2>
+      <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
       <button v-else-if="typeof card?.id === 'number'" @keypress.prevent
         @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
       >
@@ -68,7 +69,7 @@ export default {
 
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
-      (x) => (x.ok ? x.json() : x.status),
+      (x) => (x.ok ? x.json() : x.status), () => 0,
     );
   },
   unmounted() {
@@ -102,11 +103,15 @@ export default {
 
       const response = await fetch(
         `${this.backendUrl}/api/cards/${this.card.id}`, { method: 'PUT', body },
-      );
-      if (!response.ok) return;
+      ).catch(() => 0);
+
+      if (!response.ok) {
+        this.card = 0;
+        return;
+      }
 
       this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
-        (x) => (x.ok ? x.json() : x.status),
+        (x) => (x.ok ? x.json() : x.status), () => 0,
       );
 
       this.inverted = false;
