@@ -20,7 +20,7 @@
         <p v-if="(inverted && !reverseMode) || (!inverted && reverseMode)">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
         <img v-if="inverted && card.image_path !== null" alt="Word image"
-          :src="`${backendUrl}${card.image_path}?${new Date(card.updated_at).getTime()}`"
+          :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
         />
       </button>
       <div class="side-btns" v-if="typeof card?.id === 'number'">
@@ -61,6 +61,13 @@ export default {
     pendingReverseMode(newValue) {
       if (newValue) localStorage.setItem('home/reverseMode', newValue);
       else localStorage.removeItem('home/reverseMode');
+    },
+  },
+  computed: {
+    cardImageTimestamp() {
+      return new Date(
+        this.card.updated_at.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
+      ).getTime();
     },
   },
   async created() {

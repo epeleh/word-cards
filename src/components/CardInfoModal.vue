@@ -30,7 +30,7 @@
             <p>Upload an image</p>
           </div>
           <img v-if="card.image_path !== null" class="upload-img" alt="Word image"
-            :src="`${backendUrl}${card.image_path}?${new Date(card.updated_at).getTime()}`"
+            :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
           />
         </div>
       </div>
@@ -64,6 +64,13 @@ export default {
     card: null,
     deleteImageBtnHover: false,
   }),
+  computed: {
+    cardImageTimestamp() {
+      return new Date(
+        this.card.updated_at.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
+      ).getTime();
+    },
+  },
   async created() {
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/${this.cardId}`).then(
@@ -78,8 +85,10 @@ export default {
       if (e.code === 'Escape') this.closeModal();
     },
     formatDateText(text) {
-      const str = text.substr(0, text.indexOf(':'));
-      const date = new Date(text.substr(text.indexOf(':') + 1));
+      const str = text.slice(0, text.indexOf(':'));
+      const date = new Date(
+        text.replace(/^\w+ at: (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
+      );
 
       if (this.$windowWidth < 580) return '';
 
