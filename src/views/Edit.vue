@@ -375,7 +375,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, 340px);
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   gap: 22px;
   padding: 6px 2% 2%;
 
@@ -388,6 +388,7 @@ export default {
     font-size: 150%;
     border: none;
     width: 340px;
+    height: 122px;
     transition: box-shadow 0.2s;
 
     &:focus,
@@ -466,8 +467,9 @@ export default {
   .create-card .add-btn {
     display: block;
     width: 40%;
+    height: 24px;
     border: none;
-    margin: 10px auto;
+    margin: -2px auto 0;
     box-shadow: 2px 2px 2px #8f8f8f, inset 0 0 12px #9b9b9b;
     border-radius: 6px;
     fill: #646464;

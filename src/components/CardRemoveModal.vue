@@ -122,7 +122,7 @@ export default {
   .btn {
     display: inline-block;
     width: 30%;
-    height: 27px;
+    height: 24px;
     padding: 0 6px;
     margin: 8px 25px 14px;
     opacity: 0.6;
