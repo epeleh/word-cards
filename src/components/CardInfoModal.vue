@@ -45,10 +45,10 @@
 </template>
 
 <script>
-import VisibilityIcon from '@/assets/visibility.svg';
-import VisibilityOffIcon from '@/assets/visibility_off.svg';
-import ClearIcon from '@/assets/clear.svg';
-import SaveIcon from '@/assets/save.svg';
+import VisibilityIcon from '@/assets/icons/visibility.svg';
+import VisibilityOffIcon from '@/assets/icons/visibility_off.svg';
+import ClearIcon from '@/assets/icons/clear.svg';
+import SaveIcon from '@/assets/icons/save.svg';
 
 export default {
   name: 'CardInfoModal',

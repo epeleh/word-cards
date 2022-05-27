@@ -17,6 +17,24 @@
   border-radius: 9999px;
 }
 
+@font-face {
+  font-family: "Times New Roman";
+  src: url("@/assets/fonts/LiberationSerif-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Arial;
+  src: url("@/assets/fonts/LiberationSans-Regular.ttf") format("truetype");
+}
+
+* {
+  font-family: "Times New Roman";
+}
+
+input {
+  font-family: Arial;
+}
+
 html {
   overflow-y: overlay;
 }

@@ -118,14 +118,14 @@
 <script>
 import _ from 'lodash';
 
-import SearchIcon from '@/assets/search.svg';
-import ClearIcon from '@/assets/clear.svg';
-import CheckIcon from '@/assets/check.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import ClearIcon from '@/assets/icons/clear.svg';
+import CheckIcon from '@/assets/icons/check.svg';
 
-import AddIcon from '@/assets/add.svg';
-import VisibilityIcon from '@/assets/visibility.svg';
-import VisibilityOffIcon from '@/assets/visibility_off.svg';
-import InfoIcon from '@/assets/info.svg';
+import AddIcon from '@/assets/icons/add.svg';
+import VisibilityIcon from '@/assets/icons/visibility.svg';
+import VisibilityOffIcon from '@/assets/icons/visibility_off.svg';
+import InfoIcon from '@/assets/icons/info.svg';
 
 import CardInfoModal from '@/components/CardInfoModal.vue';
 import CardRemoveModal from '@/components/CardRemoveModal.vue';

@@ -37,13 +37,13 @@
 </template>
 
 <script>
-import RefreshIcon from '@/assets/refresh.svg';
-import RefreshDescriptionIcon from '@/assets/refresh_description.svg';
-import EditIcon from '@/assets/edit.svg';
+import RefreshIcon from '@/assets/icons/refresh.svg';
+import RefreshDescriptionIcon from '@/assets/icons/refresh_description.svg';
+import EditIcon from '@/assets/icons/edit.svg';
 
-import ClearIcon from '@/assets/clear.svg';
-import CheckIcon from '@/assets/check.svg';
-import DescriptionIcon from '@/assets/description.svg';
+import ClearIcon from '@/assets/icons/clear.svg';
+import CheckIcon from '@/assets/icons/check.svg';
+import DescriptionIcon from '@/assets/icons/description.svg';
 
 export default {
   name: 'Home',
