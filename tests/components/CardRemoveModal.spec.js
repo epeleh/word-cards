@@ -81,7 +81,10 @@ describe('CardRemoveModal.vue', () => {
       expect(wrapper.get('div.card-remove.remembered button.btn.no-btn').text()).toBe('No');
       expect(global.closeModal).toHaveBeenCalledTimes(0);
 
+      jest.useFakeTimers();
       await wrapper.get('div.card-remove.remembered button.btn.no-btn').trigger('click');
+      jest.runAllTimers();
+
       expect(global.closeModal).toHaveBeenNthCalledWith(1);
     });
 

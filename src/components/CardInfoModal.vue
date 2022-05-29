@@ -1,5 +1,7 @@
 <template>
-  <div class="card-info-modal" @click="closeModal()">
+  <div class="card-info-modal" @click="closeModalWithAnimation()"
+    :class="{ 'close-animation': closeAnimation }"
+  >
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
     <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
     <div v-else-if="typeof card?.id === 'number'" class="info">
@@ -63,6 +65,7 @@ export default {
   data: () => ({
     card: null,
     deleteImageBtnHover: false,
+    closeAnimation: false,
   }),
   computed: {
     cardImageTimestamp() {
@@ -81,8 +84,12 @@ export default {
     window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
+    closeModalWithAnimation() {
+      this.closeAnimation = true;
+      setTimeout(this.closeModal, 200);
+    },
     onKeyUp(e) {
-      if (e.code === 'Escape') this.closeModal();
+      if (e.code === 'Escape') this.closeModalWithAnimation();
     },
     formatDateText(text) {
       const str = text.slice(0, text.indexOf(':'));
@@ -126,6 +133,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@keyframes modal-show-animation {
+  from { opacity: 0 }
+  to { opacity: 1; }
+}
+
+@keyframes modal-close-animation {
+  from { opacity: 1 }
+  to { opacity: 0; }
+}
+
 .card-info-modal {
   position: fixed;
   top: 0;
@@ -136,6 +153,11 @@ export default {
   overflow: hidden;
   background-color: #4f4f4fcc;
   z-index: 5000;
+  animation: modal-show-animation 0.2s;
+
+  &.close-animation {
+    animation: modal-close-animation 0.2s forwards;
+  }
 }
 
 .info {

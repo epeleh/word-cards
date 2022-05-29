@@ -1,5 +1,7 @@
 <template>
-  <div class="card-remove-modal" @click="closeModal()">
+  <div class="card-remove-modal" @click="closeModalWithAnimation()"
+    :class="{ 'close-animation': closeAnimation }"
+  >
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
     <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
     <div v-else-if="typeof card?.id === 'number'" class="remove">
@@ -8,8 +10,10 @@
       <div class="card-remove" @click.stop :class="{ remembered: card.remembered }">
         <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
         <p class="message">Are you sure want to delete the card?</p>
-        <button class="btn no-btn" @click="closeModal()">No</button>
-        <button class="btn yes-btn" @click="deleteCard(cardId); closeModal()">Yes</button>
+        <button class="btn no-btn" @click="closeModalWithAnimation()">No</button>
+        <button class="btn yes-btn" @click="deleteTheCard(); closeModalWithAnimation()">
+          Yes
+        </button>
       </div>
 
       <div class="placeholder"></div>
@@ -28,6 +32,7 @@ export default {
   },
   data: () => ({
     card: null,
+    closeAnimation: false,
   }),
   async created() {
     window.addEventListener('keyup', this.onKeyUp);
@@ -39,15 +44,32 @@ export default {
     window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
+    closeModalWithAnimation() {
+      this.closeAnimation = true;
+      setTimeout(this.closeModal, 200);
+    },
+    deleteTheCard() {
+      if (!this.closeAnimation) this.deleteCard(this.cardId);
+    },
     onKeyUp(e) {
-      if (['Enter', 'Delete'].includes(e.code)) this.deleteCard(this.cardId);
-      if (['Enter', 'Delete', 'Escape'].includes(e.code)) this.closeModal();
+      if (['Enter', 'Delete'].includes(e.code)) this.deleteTheCard();
+      if (['Enter', 'Delete', 'Escape'].includes(e.code)) this.closeModalWithAnimation();
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+@keyframes modal-show-animation {
+  from { opacity: 0 }
+  to { opacity: 1; }
+}
+
+@keyframes modal-close-animation {
+  from { opacity: 1 }
+  to { opacity: 0; }
+}
+
 .card-remove-modal {
   position: fixed;
   top: 0;
@@ -58,6 +80,11 @@ export default {
   overflow: hidden;
   background-color: #4f4f4fcc;
   z-index: 5000;
+  animation: modal-show-animation 0.2s;
+
+  &.close-animation {
+    animation: modal-close-animation 0.2s forwards;
+  }
 }
 
 .remove {

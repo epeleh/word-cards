@@ -10,4 +10,3 @@ docker-compose up
 ---
 #### TODO:
 * Add a popup with an explanation of the search commands (`#active` etc..) when clicking on the search icon
-* Add animations for the `nextCard` function

@@ -12,8 +12,8 @@
     <main>
       <h2 v-if="card === 404" class="no-card-banner">You have no active cards :(</h2>
       <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
-      <button v-else-if="typeof card?.id === 'number'" @keypress.prevent
-        @click="onCardClick()" class="card" :class="{ remembered: card.remembered }"
+      <button v-else-if="typeof card?.id === 'number'" @keypress.prevent @click="onCardClick()"
+        class="card" :class="[{ remembered: card.remembered }, cardAnimation]"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
@@ -56,6 +56,7 @@ export default {
     inverted: false,
     reverseMode: false,
     pendingReverseMode: false,
+    cardAnimation: 'show-animation',
   }),
   watch: {
     pendingReverseMode(newValue) {
@@ -78,6 +79,8 @@ export default {
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
       (x) => (x.ok ? x.json() : x.status), () => 0,
     );
+
+    setTimeout(() => { this.cardAnimation = null; }, 200);
   },
   unmounted() {
     window.removeEventListener('keyup', this.onKeyUp);
@@ -95,6 +98,9 @@ export default {
     onForgetClick() { this.nextCard({ remembered: false }); },
     onRememberClick() { this.nextCard({ remembered: true }); },
     async nextCard({ remembered }) {
+      if (this.cardAnimation) return;
+      this.cardAnimation = `${remembered ? 'remember' : 'forget'}-animation`;
+
       document.activeElement.blur();
 
       const now = new Date();
@@ -108,21 +114,31 @@ export default {
         ].map((x) => (typeof x === 'string' ? x : String(x).padStart(2, '0'))).join(''),
       });
 
-      const response = await fetch(
-        `${this.backendUrl}/api/cards/${this.card.id}`, { method: 'PUT', body },
-      ).catch(() => 0);
+      const [response] = await Promise.all([
+        fetch(
+          `${this.backendUrl}/api/cards/${this.card.id}`, { method: 'PUT', body },
+        ).catch(() => 0),
+        new Promise((resolve) => { setTimeout(resolve, 250); }),
+      ]);
 
       if (!response.ok) {
+        await new Promise((resolve) => { setTimeout(resolve, 250); });
         this.card = 0;
         return;
       }
 
-      this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
-        (x) => (x.ok ? x.json() : x.status), () => 0,
-      );
+      [this.card] = await Promise.all([
+        fetch(`${this.backendUrl}/api/cards/next`).then(
+          (x) => (x.ok ? x.json() : x.status), () => 0,
+        ),
+        new Promise((resolve) => { setTimeout(resolve, 250); }),
+      ]);
 
       this.inverted = false;
       this.reverseMode = this.pendingReverseMode;
+
+      this.cardAnimation = 'show-animation';
+      setTimeout(() => { this.cardAnimation = null; }, 200);
     },
   },
 };
@@ -224,6 +240,19 @@ export default {
   }
 }
 
+@keyframes card-forget-animation {
+  to { transform: translate(calc(-50% - 120vw), -50%); opacity: 0; }
+}
+
+@keyframes card-remember-animation {
+  to { transform: translate(calc(-50% + 120vw), -50%); opacity: 0; }
+}
+
+@keyframes card-show-animation {
+  from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
 .card {
   position: absolute;
   top: 50%;
@@ -248,6 +277,10 @@ export default {
   &:hover {
     box-shadow: 6px 6px 15px #000, inset 0 0 15px #9b9b9b;
   }
+
+  &.forget-animation { animation: card-forget-animation 0.5s forwards; }
+  &.remember-animation { animation: card-remember-animation 0.5s forwards; }
+  &.show-animation { animation: card-show-animation 0.2s; }
 
   .inverted-icon {
     position: absolute;

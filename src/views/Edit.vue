@@ -371,6 +371,11 @@ export default {
   }
 }
 
+@keyframes card-show-animation {
+  from { transform: scale(0.95); opacity: 0; }
+  to { opacity: 1; }
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, 340px);
@@ -390,6 +395,7 @@ export default {
     width: 340px;
     height: 122px;
     transition: box-shadow 0.2s;
+    animation: card-show-animation 0.2s;
 
     &:focus,
     &:hover {
