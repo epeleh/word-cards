@@ -118,11 +118,11 @@ export default {
         fetch(
           `${this.backendUrl}/api/cards/${this.card.id}`, { method: 'PUT', body },
         ).catch(() => 0),
-        new Promise((resolve) => { setTimeout(resolve, 250); }),
+        new Promise((resolve) => { setTimeout(resolve, 200); }),
       ]);
 
       if (!response.ok) {
-        await new Promise((resolve) => { setTimeout(resolve, 250); });
+        await new Promise((resolve) => { setTimeout(resolve, 200); });
         this.card = 0;
         return;
       }
@@ -131,7 +131,7 @@ export default {
         fetch(`${this.backendUrl}/api/cards/next`).then(
           (x) => (x.ok ? x.json() : x.status), () => 0,
         ),
-        new Promise((resolve) => { setTimeout(resolve, 250); }),
+        new Promise((resolve) => { setTimeout(resolve, 200); }),
       ]);
 
       this.inverted = false;
@@ -241,15 +241,15 @@ export default {
 }
 
 @keyframes card-forget-animation {
-  to { transform: translate(calc(-50% - 120vw), -50%); opacity: 0; }
+  to { transform: translate(calc(-100% - 60vw), -50%); }
 }
 
 @keyframes card-remember-animation {
-  to { transform: translate(calc(-50% + 120vw), -50%); opacity: 0; }
+  to { transform: translate(60vw, -50%); }
 }
 
 @keyframes card-show-animation {
-  from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  from { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
   to { transform: translate(-50%, -50%); opacity: 1; }
 }
 
@@ -278,8 +278,8 @@ export default {
     box-shadow: 6px 6px 15px #000, inset 0 0 15px #9b9b9b;
   }
 
-  &.forget-animation { animation: card-forget-animation 0.5s forwards; }
-  &.remember-animation { animation: card-remember-animation 0.5s forwards; }
+  &.forget-animation { animation: card-forget-animation 0.4s forwards; }
+  &.remember-animation { animation: card-remember-animation 0.4s forwards; }
   &.show-animation { animation: card-show-animation 0.2s; }
 
   .inverted-icon {
