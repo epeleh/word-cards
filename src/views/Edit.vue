@@ -20,7 +20,7 @@
             {{ filteredCards.length }} / {{ cards.length }}
           </p>
         </div>
-        <button @click="onClearSearchClick()" :disabled="!search" class="btn search-btn">
+        <button @click="search = ''" :disabled="!search" class="btn search-btn">
           <ClearIcon v-if="search" />
         </button>
       </div>
@@ -200,14 +200,11 @@ export default {
       this.cardsDisplayLimit += 10;
 
       if (this.cardsDisplayLimit >= this.filteredCards.length) return;
-      setTimeout(() => { this.renderCards(false); }, 0);
+      _.defer(this.renderCards, false);
     },
     readUrlParams() {
       this.search = this.$route.query.s ?? '';
       this.infoModalCardId = this.$route.params.cardId ? +this.$route.params.cardId : null;
-    },
-    onClearSearchClick() {
-      this.search = '';
     },
     async createCard() {
       const [data, status] = await fetch(

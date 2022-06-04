@@ -115,16 +115,12 @@ export default {
 
       this.card = await fetch(
         `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'POST', body: data },
-      ).then(
-        (x) => (x.ok ? x.json() : x.status), () => 0,
-      );
+      ).then((x) => (x.ok ? x.json() : x.status), () => 0);
     },
     async deleteImage() {
       this.card = await fetch(
         `${this.backendUrl}/api/cards/${this.cardId}/image`, { method: 'DELETE' },
-      ).then(
-        (x) => (x.ok ? x.json() : x.status), () => 0,
-      );
+      ).then((x) => (x.ok ? x.json() : x.status), () => 0);
 
       this.$refs.uploadImageInput.value = null;
     },

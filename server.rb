@@ -119,7 +119,7 @@ namespace '/api' do
     end
 
     get '/next' do
-      remembered = DB[:cards].where(active: true).order(Sequel.lit('RANDOM()')).get(:remembered)
+      remembered = DB[:cards].where(active: true).order(Sequel.function('RANDOM')).get(:remembered)
       halt(404) if remembered.nil?
       DB[:cards].where(active: true, remembered:).order(:met_at).first.to_json
     end
@@ -206,9 +206,7 @@ end
 
 namespace '/storage' do
   get '/:filename' do
-    path = File.join(__dir__, 'storage', params[:filename])
-    halt 404 unless Pathname(path).file?
-    send_file path
+    send_file File.join(__dir__, 'storage', params[:filename])
   end
 
   get '.zip' do
@@ -223,5 +221,3 @@ end
 get '*' do
   send_file File.join(settings.public_folder, 'index.html')
 end
-
-not_found { '' }

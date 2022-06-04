@@ -9,6 +9,7 @@
         <EditIcon />
       </router-link>
     </nav>
+
     <main>
       <h2 v-if="card === 404" class="no-card-banner">You have no active cards :(</h2>
       <h2 v-else-if="typeof card === 'number'" class="no-card-banner">Something went wrong :(</h2>
@@ -17,12 +18,15 @@
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
         <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
+
         <p v-if="(inverted && !reverseMode) || (!inverted && reverseMode)">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
+
         <img v-if="inverted && card.image_path !== null" alt="Word image"
           :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
         />
       </button>
+
       <div class="side-btns" v-if="typeof card?.id === 'number'">
         <button @click="onForgetClick()" class="btn forget-btn">
           <div><ClearIcon /></div>
@@ -60,8 +64,7 @@ export default {
   }),
   watch: {
     pendingReverseMode(newValue) {
-      if (newValue) localStorage.setItem('home/reverseMode', newValue);
-      else localStorage.removeItem('home/reverseMode');
+      localStorage.setItem(`${this.$options.name}/reverseMode`, newValue);
     },
   },
   computed: {
@@ -72,8 +75,8 @@ export default {
     },
   },
   async created() {
-    this.pendingReverseMode = !!localStorage.getItem('home/reverseMode');
-    this.reverseMode = this.pendingReverseMode;
+    this.reverseMode = !!JSON.parse(localStorage.getItem(`${this.$options.name}/reverseMode`));
+    this.pendingReverseMode = this.reverseMode;
 
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
