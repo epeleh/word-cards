@@ -155,7 +155,7 @@ export default {
   }),
   watch: {
     search(newValue) {
-      this.$router.replace(newValue ? { query: { s: newValue } } : {});
+      this.$router.replace(newValue.trim() ? { query: { s: newValue.trim() } } : {});
       this.renderCards();
     },
     infoModalCardId(newValue) {
@@ -166,18 +166,20 @@ export default {
   },
   computed: {
     filteredCards() {
+      const search = this.search.toLowerCase().trim();
+      const searchWords = search.replace(/^#/, '').split('&').map(_.method('trim'));
+
       return _.orderBy(
-        (this.cards ?? []).filter((card) => (
-          this.search.toLowerCase().trim().startsWith('#') ? [
+        (this.cards ?? []).filter((card) => (!search.startsWith('#') ? (
+          [card.text.toLowerCase(), card.translation.toLowerCase()].some((x) => x.includes(search))
+        ) : (
+          searchWords.every((word) => [
             `#${card.id}.`,
             `#${card.active ? 'active' : 'inactive'}.`,
             `#${card.image_path ? 'image' : 'noimage'}.`,
             `#${card.remembered ? 'remembered' : 'unremembered'}.`,
-          ] : [
-            card.text.toLowerCase(),
-            card.translation.toLowerCase(),
-          ]
-        ).some((x) => x.includes(this.search.toLowerCase().trim()))),
+          ].some((x) => x.includes(`#${word}`)))
+        ))),
         ['active', 'met_at', 'id'], ['desc', 'desc', 'asc'],
       );
     },
