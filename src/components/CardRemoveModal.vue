@@ -1,5 +1,5 @@
 <template>
-  <div class="card-remove-modal" @click="closeModalWithAnimation()"
+  <div class="modal card-remove-modal" @click="closeModalWithAnimation()"
     :class="{ 'close-animation': closeAnimation }"
   >
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
@@ -60,33 +60,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@keyframes modal-show-animation {
-  from { opacity: 0 }
-  to { opacity: 1; }
-}
-
-@keyframes modal-close-animation {
-  from { opacity: 1 }
-  to { opacity: 0; }
-}
-
-.card-remove-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  box-shadow: inset 0 0 30px 5px #000;
-  overflow: hidden;
-  background-color: #4f4f4fcc;
-  z-index: 5000;
-  animation: modal-show-animation 0.2s;
-
-  &.close-animation {
-    animation: modal-close-animation 0.2s forwards;
-  }
-}
-
 .remove {
   position: absolute;
   top: 50%;

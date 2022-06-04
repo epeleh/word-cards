@@ -1,5 +1,5 @@
 <template>
-  <router-view/>
+  <router-view />
 </template>
 
 <style lang="scss">
@@ -56,5 +56,32 @@ body {
   text-align: center;
   color: #fff;
   text-shadow: 1px 1px 10px #00000075;
+}
+
+@keyframes modal-show-animation {
+  from { opacity: 0 }
+  to { opacity: 1; }
+}
+
+@keyframes modal-close-animation {
+  from { opacity: 1 }
+  to { opacity: 0; }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 30px 5px #000;
+  overflow: hidden;
+  background-color: #4f4f4fcc;
+  z-index: 5000;
+  animation: modal-show-animation 0.2s;
+
+  &.close-animation {
+    animation: modal-close-animation 0.2s forwards;
+  }
 }
 </style>

@@ -119,7 +119,7 @@ namespace '/api' do
     end
 
     get '/next' do
-      remembered = DB[:cards].where(active: true).order(Sequel.function('RANDOM')).get(:remembered)
+      remembered = DB[:cards].where(active: true).order(Sequel.function(:random)).get(:remembered)
       halt(404) if remembered.nil?
       DB[:cards].where(active: true, remembered:).order(:met_at).first.to_json
     end

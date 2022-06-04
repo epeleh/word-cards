@@ -8,7 +8,12 @@
 
     <header class="header-bar">
       <div class="search">
-        <SearchIcon class="search-icon" />
+        <button @click="searchUsageModalCardId = someCardId"
+          class="btn search-btn search-usage-btn"
+        >
+          <SearchIcon />
+        </button>
+
         <div class="search-input-wrapper">
           <input type="text" name="search" placeholder="search"
             :value="search" @input="(e) => search = e.target.value"
@@ -17,10 +22,10 @@
           <p v-if="Array.isArray(cards) && search" class="count"
             :title="`${filteredCards.length} / ${cards.length}`"
           >
-            {{ filteredCards.length }} / {{ cards.length }}
+            {{filteredCards.length}} / {{cards.length}}
           </p>
         </div>
-        <button @click="search = ''" :disabled="!search" class="btn search-btn">
+        <button @click="search = ''" :disabled="!search" class="btn search-btn search-clear-btn">
           <ClearIcon v-if="search" />
         </button>
       </div>
@@ -103,6 +108,11 @@
         </div>
       </div>
 
+      <SearchUsageModal v-if="typeof searchUsageModalCardId === 'number'"
+        :cardId="searchUsageModalCardId" :closeModal="() => searchUsageModalCardId = null"
+        :readUrlParams="readUrlParams"
+      />
+
       <CardInfoModal v-if="typeof infoModalCardId === 'number'"
         :cardId="infoModalCardId" :closeModal="() => infoModalCardId = null"
       />
@@ -127,6 +137,7 @@ import VisibilityIcon from '@/assets/icons/visibility.svg';
 import VisibilityOffIcon from '@/assets/icons/visibility_off.svg';
 import InfoIcon from '@/assets/icons/info.svg';
 
+import SearchUsageModal from '@/components/SearchUsageModal.vue';
 import CardInfoModal from '@/components/CardInfoModal.vue';
 import CardRemoveModal from '@/components/CardRemoveModal.vue';
 
@@ -141,6 +152,7 @@ export default {
     VisibilityIcon,
     VisibilityOffIcon,
     InfoIcon,
+    SearchUsageModal,
     CardInfoModal,
     CardRemoveModal,
   },
@@ -150,6 +162,7 @@ export default {
     cardsDisplayLimit: 0,
     newCard: { text: '', translation: '' },
     cardErrors: {},
+    searchUsageModalCardId: null,
     infoModalCardId: null,
     removeModalCardId: null,
   }),
@@ -182,6 +195,9 @@ export default {
         ))),
         ['active', 'met_at', 'id'], ['desc', 'desc', 'asc'],
       );
+    },
+    someCardId() {
+      return _.sample(this.filteredCards)?.id ?? _.sample(this.cards)?.id ?? 123;
     },
   },
   async created() {
@@ -321,13 +337,6 @@ export default {
     justify-content: center;
     align-items: center;
     gap: 12px;
-
-    .search-icon {
-      fill: #fff;
-      transform: scale(1.5);
-      opacity: 0.6;
-      min-width: 24px;
-    }
 
     .search-input-wrapper {
       flex: 1;

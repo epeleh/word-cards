@@ -5,7 +5,7 @@ describe('Home.vue', () => {
   let wrapper;
 
   describe('when api responds with 404 status', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       global.fetch = jest.fn(() => Promise.resolve({ ok: false, status: 404 }));
 
       wrapper = shallowMount(Home, {
@@ -34,7 +34,7 @@ describe('Home.vue', () => {
   });
 
   describe('when api responds with some card', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       global.fetch = jest.fn(() => Promise.resolve({
         ok: true,
         json: () => ({

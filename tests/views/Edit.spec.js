@@ -144,7 +144,7 @@ describe('Edit.vue', () => {
         expect(wrapper.find('form.card.create-card').exists()).toBe(false);
         expect(wrapper.findAll('div.card h4').map((x) => x.text())).toEqual(['#90']);
 
-        await wrapper.get('.search button.btn.search-btn').trigger('click');
+        await wrapper.get('.search button.btn.search-clear-btn').trigger('click');
         expect(wrapper.find('form.card.create-card').exists()).toBe(true);
         expect(wrapper.findAll('div.card h4').map((x) => x.text())).toEqual(['#90', '#89']);
       });

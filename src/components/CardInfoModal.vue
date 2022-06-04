@@ -1,5 +1,5 @@
 <template>
-  <div class="card-info-modal" @click="closeModalWithAnimation()"
+  <div class="modal card-info-modal" @click="closeModalWithAnimation()"
     :class="{ 'close-animation': closeAnimation }"
   >
     <h2 v-if="card === 404" class="no-card-banner">The card was not found :(</h2>
@@ -26,21 +26,21 @@
 
           <input type="file" accept="image/*" class="upload-input"
             @change="uploadImage($event)" ref="uploadImageInput"
-          />
+          >
           <div class="upload-message" :class="{ 'upload-field': card.image_path === null }">
             <SaveIcon />
             <p>Upload an image</p>
           </div>
           <img v-if="card.image_path !== null" class="upload-img" alt="Word image"
             :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
-          />
+          >
         </div>
       </div>
 
       <ul class="additional-info">
-        <li>{{ formatDateText(`Met at: ${card.met_at}`) }}</li>
-        <li>{{ formatDateText(`Created at: ${card.created_at}`) }}</li>
-        <li>{{ formatDateText(`Updated at: ${card.updated_at}`) }}</li>
+        <li>{{formatDateText(`Met at: ${card.met_at}`)}}</li>
+        <li>{{formatDateText(`Created at: ${card.created_at}`)}}</li>
+        <li>{{formatDateText(`Updated at: ${card.updated_at}`)}}</li>
       </ul>
     </div>
   </div>
@@ -129,33 +129,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@keyframes modal-show-animation {
-  from { opacity: 0 }
-  to { opacity: 1; }
-}
-
-@keyframes modal-close-animation {
-  from { opacity: 1 }
-  to { opacity: 0; }
-}
-
-.card-info-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  box-shadow: inset 0 0 30px 5px #000;
-  overflow: hidden;
-  background-color: #4f4f4fcc;
-  z-index: 5000;
-  animation: modal-show-animation 0.2s;
-
-  &.close-animation {
-    animation: modal-close-animation 0.2s forwards;
-  }
-}
-
 .info {
   position: absolute;
   top: 50%;

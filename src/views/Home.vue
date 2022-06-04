@@ -24,7 +24,7 @@
 
         <img v-if="inverted && card.image_path !== null" alt="Word image"
           :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
-        />
+        >
       </button>
 
       <div class="side-btns" v-if="typeof card?.id === 'number'">
