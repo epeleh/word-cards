@@ -6,6 +6,7 @@
 require 'fileutils'
 require 'sqlite3'
 require 'sequel'
+require 'logger'
 
 Sequel.default_timezone = :utc
 
@@ -42,6 +43,11 @@ DB[:cards].exclude(image_path: nil).select_map(:id).then do |image_card_ids|
       File.basename(image, File.extname(image)).delete_prefix('card_').to_i
     end
   ).update(image_path: nil, updated_at: Time.now.utc)
+end
+
+DB.logger = Logger.new($stdout)
+DB.loggers.first.formatter = proc do |severity, datetime, _progname, msg|
+  "DB - #{severity} - [#{datetime.strftime('%d/%b/%Y:%T %z')}] #{msg}\n"
 end
 
 # ===================================================== Rest API ===================================================== #
