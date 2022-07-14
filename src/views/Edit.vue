@@ -227,7 +227,7 @@ export default {
     async createCard() {
       const [data, status] = await fetch(
         `${this.backendUrl}/api/cards`, { method: 'POST', body: JSON.stringify(this.newCard) },
-      ).then(async (x) => ([await x.json(), x.status]), () => [null, 0]);
+      ).then(async (x) => ([await x.json().catch(() => null), x.status]), () => [null, 0]);
 
       switch (status) {
         case 201:
@@ -250,7 +250,7 @@ export default {
 
       const [data, status] = await fetch(
         `${this.backendUrl}/api/cards/${cardId}`, { method: 'PUT', body },
-      ).then(async (x) => ([await x.json(), x.status]), () => [null, 0]);
+      ).then(async (x) => ([await x.json().catch(() => null), x.status]), () => [null, 0]);
 
       switch (status) {
         case 200:
@@ -270,7 +270,7 @@ export default {
 
       const response = await fetch(
         `${this.backendUrl}/api/cards/${cardId}`, { method: 'DELETE' },
-      ).catch(() => 0);
+      ).catch(() => ({ ok: false }));
 
       if (!response.ok) this.cards = 0;
     },

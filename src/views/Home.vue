@@ -120,7 +120,7 @@ export default {
       const [response] = await Promise.all([
         fetch(
           `${this.backendUrl}/api/cards/${this.card.id}`, { method: 'PUT', body },
-        ).catch(() => 0),
+        ).catch(() => ({ ok: false })),
         new Promise((resolve) => { setTimeout(resolve, 200); }),
       ]);
 

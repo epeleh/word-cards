@@ -6,7 +6,7 @@ describe('CardRemoveModal.vue', () => {
 
   describe('when api responds with 404 status', () => {
     beforeEach(() => {
-      global.fetch = jest.fn(() => Promise.resolve({ ok: false, status: 404 }));
+      global.fetch = jest.fn(async () => ({ ok: false, status: 404 }));
 
       wrapper = shallowMount(CardRemoveModal, {
         global: { provide: { backendUrl: '' } },
@@ -33,9 +33,9 @@ describe('CardRemoveModal.vue', () => {
 
   describe('when api responds with a card', () => {
     beforeEach(() => {
-      global.fetch = jest.fn(() => Promise.resolve({
+      global.fetch = jest.fn(async () => ({
         ok: true,
-        json: () => ({
+        json: async () => ({
           id: 42,
           text: 'some text',
           translation: 'some translation',

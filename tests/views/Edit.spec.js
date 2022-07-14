@@ -8,9 +8,9 @@ describe('Edit.vue', () => {
 
   describe('when api responds with some cards', () => {
     beforeEach(async () => {
-      global.fetch = jest.fn(() => Promise.resolve({
+      global.fetch = jest.fn(async () => ({
         ok: true,
-        json: () => ([
+        json: async () => ([
           {
             id: 89,
             text: 'some text 1',
@@ -80,7 +80,7 @@ describe('Edit.vue', () => {
         updated_at: '2022-02-14 18:22:59 UTC',
       };
 
-      global.fetch = jest.fn(() => Promise.resolve({ status: 201, json: () => newCard }));
+      global.fetch = jest.fn(async () => ({ status: 201, json: async () => newCard }));
       await wrapper.get('form.create-card').trigger('submit');
 
       expect(global.fetch).toHaveBeenNthCalledWith(1, '/api/cards', {
