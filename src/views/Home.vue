@@ -22,9 +22,7 @@
         <p v-if="(inverted && !reverseMode) || (!inverted && reverseMode)">{{card.translation}}</p>
         <p v-else>{{card.text}}</p>
 
-        <img v-if="inverted && card.image_path !== null" alt="Word image"
-          :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
-        >
+        <img v-if="inverted && card.image_path !== null" alt="Word image" :src="cardImageSrc(card)">
       </button>
 
       <div class="side-btns" v-if="typeof card?.id === 'number'">
@@ -67,13 +65,6 @@ export default {
       localStorage.setItem(`${this.$options.name}/reverseMode`, newValue);
     },
   },
-  computed: {
-    cardImageTimestamp() {
-      return new Date(
-        this.card.updated_at.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
-      ).getTime();
-    },
-  },
   async created() {
     this.reverseMode = !!JSON.parse(localStorage.getItem(`${this.$options.name}/reverseMode`));
     this.pendingReverseMode = this.reverseMode;
@@ -81,7 +72,7 @@ export default {
     window.addEventListener('keyup', this.onKeyUp);
     this.card = await fetch(`${this.backendUrl}/api/cards/next`).then(
       (x) => (x.ok ? x.json() : x.status), () => 0,
-    );
+    ).then(this.preloadCardImage);
 
     setTimeout(() => { this.cardAnimation = null; }, 200);
   },
@@ -96,6 +87,13 @@ export default {
       if (['Space', 'Enter'].includes(e.code)) this.onCardClick();
       else if (e.code === 'ArrowLeft') this.onForgetClick();
       else if (e.code === 'ArrowRight') this.onRememberClick();
+    },
+    cardImageSrc(card) {
+      const timestamp = new Date(
+        card.updated_at.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
+      ).getTime();
+
+      return `${this.backendUrl}${card.image_path}?${timestamp}`;
     },
     onCardClick() { this.inverted = !this.inverted; },
     onForgetClick() { this.nextCard({ remembered: false }); },
@@ -133,7 +131,7 @@ export default {
       [this.card] = await Promise.all([
         fetch(`${this.backendUrl}/api/cards/next`).then(
           (x) => (x.ok ? x.json() : x.status), () => 0,
-        ),
+        ).then(this.preloadCardImage),
         new Promise((resolve) => { setTimeout(resolve, 200); }),
       ]);
 
@@ -142,6 +140,13 @@ export default {
 
       this.cardAnimation = 'show-animation';
       setTimeout(() => { this.cardAnimation = null; }, 200);
+    },
+    async preloadCardImage(card) {
+      if (typeof card !== 'number' && card.image_path !== null) {
+        (new Image()).src = this.cardImageSrc(card);
+      }
+
+      return card;
     },
   },
 };

@@ -32,7 +32,7 @@
             <p>Upload an image</p>
           </div>
           <img v-if="card.image_path !== null" class="upload-img" alt="Word image"
-            :src="`${backendUrl}${card.image_path}?${cardImageTimestamp}`"
+            :src="cardImageSrc"
           >
         </div>
       </div>
@@ -68,10 +68,12 @@ export default {
     closeAnimation: false,
   }),
   computed: {
-    cardImageTimestamp() {
-      return new Date(
+    cardImageSrc() {
+      const timestamp = new Date(
         this.card.updated_at.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
       ).getTime();
+
+      return `${this.backendUrl}${this.card.image_path}?${timestamp}`;
     },
   },
   async created() {

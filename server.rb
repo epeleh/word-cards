@@ -55,7 +55,6 @@ end
 require 'sinatra'
 require 'sinatra/namespace'
 require 'archive/zip'
-require 'pry' if settings.development?
 
 set :public_folder, File.join(__dir__, 'dist')
 
