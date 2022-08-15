@@ -10,6 +10,12 @@ module.exports = {
   parserOptions: {
     parser: '@babel/eslint-parser',
   },
+  globals: {
+    defineProps: 'readonly',
+    defineEmits: 'readonly',
+    defineExpose: 'readonly',
+    withDefaults: 'readonly',
+  },
   overrides: [
     {
       files: [
@@ -31,8 +37,8 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'function-call-argument-newline': 'off',
     'function-paren-newline': 'off',
+    'no-unused-vars': 'off',
     'default-case': 'off',
-    'no-unused-vars': 'warn',
     'vue/no-unused-components': 'warn',
     'no-multiple-empty-lines': 'warn',
     'object-curly-spacing': 'warn',

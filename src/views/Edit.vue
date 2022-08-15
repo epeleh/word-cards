@@ -22,7 +22,7 @@
           <p v-if="Array.isArray(cards) && search" class="count"
             :title="`${filteredCards.length} / ${cards.length}`"
           >
-            {{filteredCards.length}} / {{cards.length}}
+            {{ filteredCards.length }} / {{ cards.length }}
           </p>
         </div>
         <button @click="search = ''" :disabled="!search" class="btn search-btn search-clear-btn">
@@ -79,7 +79,7 @@
               <VisibilityOffIcon />
             </button>
             <button title="info" @click="infoModalCardId = card.id"><InfoIcon /></button>
-            <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
+            <h4 :title="`#${card.id}`">{{ `#${card.id}` }}</h4>
           </div>
 
           <div>
@@ -142,7 +142,6 @@ import CardInfoModal from '@/components/CardInfoModal.vue';
 import CardRemoveModal from '@/components/CardRemoveModal.vue';
 
 export default {
-  name: 'Edit',
   inject: ['backendUrl'],
   components: {
     SearchIcon,

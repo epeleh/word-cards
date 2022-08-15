@@ -13,7 +13,7 @@ describe('CardRemoveModal.vue', () => {
         props: {
           cardId: 523,
           closeModal: global.closeModal = jest.fn(),
-          deleteCard: global.deleteCard = jest.fn(),
+          deleteCard: global.deleteCard = jest.fn((cardId) => undefined),
         },
       });
     });
@@ -53,7 +53,7 @@ describe('CardRemoveModal.vue', () => {
         props: {
           cardId: 42,
           closeModal: global.closeModal = jest.fn(),
-          deleteCard: global.deleteCard = jest.fn(),
+          deleteCard: global.deleteCard = jest.fn((cardId) => undefined),
         },
       });
     });

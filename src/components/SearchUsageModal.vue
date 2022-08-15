@@ -6,7 +6,7 @@
       <h2><InfoIcon />Search usage<div class="placeholder"></div></h2>
 
       <p>
-        <router-link :to="`/edit?s=%23${cardId}.`">{{`#${cardId}.`}}</router-link>
+        <router-link :to="`/edit?s=%23${cardId}.`">{{ `#${cardId}.` }}</router-link>
         - find a card by id
       </p>
 
@@ -39,39 +39,28 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onUnmounted } from 'vue';
 import InfoIcon from '@/assets/icons/info.svg';
 
-export default {
-  name: 'SearchUsageModal',
-  components: {
-    InfoIcon,
-  },
-  props: {
-    cardId: { type: Number, required: true },
-    closeModal: { type: Function, required: true },
-    readUrlParams: { type: Function, required: true },
-  },
-  data: () => ({
-    closeAnimation: false,
-  }),
-  created() {
-    window.addEventListener('keyup', this.onKeyUp);
-  },
-  unmounted() {
-    window.removeEventListener('keyup', this.onKeyUp);
-  },
-  methods: {
-    closeModalWithAnimation() {
-      this.closeAnimation = true;
-      this.readUrlParams();
-      setTimeout(this.closeModal, 200);
-    },
-    onKeyUp(e) {
-      if (e.code === 'Escape') this.closeModalWithAnimation();
-    },
-  },
+const props = defineProps({
+  cardId: { type: Number, required: true, validator: (value) => value > 0 },
+  closeModal: { type: Function, required: true, validator: (value) => !value.length },
+  readUrlParams: { type: Function, required: true, validator: (value) => !value.length },
+});
+
+const closeAnimation = ref(false);
+const closeModalWithAnimation = () => {
+  if (closeAnimation.value) return;
+  closeAnimation.value = true;
+
+  props.readUrlParams();
+  setTimeout(props.closeModal, 200);
 };
+
+const onKeyUp = (e) => { if (e.code === 'Escape') closeModalWithAnimation(); };
+window.addEventListener('keyup', onKeyUp);
+onUnmounted(() => window.removeEventListener('keyup', onKeyUp));
 </script>
 
 <style scoped lang="scss">

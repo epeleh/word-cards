@@ -8,6 +8,7 @@ describe('SearchUsageModal.vue', () => {
     wrapper = shallowMount(SearchUsageModal, {
       global: {
         stubs: ['router-link', 'InfoIcon'],
+        config: { warnHandler: jest.fn() },
       },
       props: {
         cardId: 123,

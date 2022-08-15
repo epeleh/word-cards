@@ -17,10 +17,10 @@
         class="card" :class="[{ remembered: card.remembered }, cardAnimation]"
       >
         <DescriptionIcon v-if="inverted" class="inverted-icon" />
-        <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
+        <h4 :title="`#${card.id}`">{{ `#${card.id}` }}</h4>
 
-        <p v-if="(inverted && !reverseMode) || (!inverted && reverseMode)">{{card.translation}}</p>
-        <p v-else>{{card.text}}</p>
+        <p v-if="inverted !== reverseMode">{{ card.translation }}</p>
+        <p v-else>{{ card.text }}</p>
 
         <img v-if="inverted && card.image_path !== null" alt="Word image" :src="cardImageSrc(card)">
       </button>
@@ -48,7 +48,6 @@ import CheckIcon from '@/assets/icons/check.svg';
 import DescriptionIcon from '@/assets/icons/description.svg';
 
 export default {
-  name: 'Home',
   inject: ['backendUrl'],
   components: {
     RefreshIcon, RefreshDescriptionIcon, EditIcon, ClearIcon, CheckIcon, DescriptionIcon,

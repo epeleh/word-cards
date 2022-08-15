@@ -8,7 +8,7 @@
       <div class="placeholder"></div>
 
       <div class="card-remove" @click.stop :class="{ remembered: card.remembered }">
-        <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
+        <h4 :title="`#${card.id}`">{{ `#${card.id}` }}</h4>
         <p class="message">Are you sure want to delete the card?</p>
         <button class="btn no-btn" @click="closeModalWithAnimation()">No</button>
         <button class="btn yes-btn" @click="deleteTheCard(); closeModalWithAnimation()">
@@ -23,12 +23,11 @@
 
 <script>
 export default {
-  name: 'CardRemoveModal',
   inject: ['backendUrl'],
   props: {
-    cardId: { type: Number, required: true },
-    closeModal: { type: Function, required: true },
-    deleteCard: { type: Function, required: true },
+    cardId: { type: Number, required: true, validator: (value) => value > 0 },
+    closeModal: { type: Function, required: true, validator: (value) => !value.length },
+    deleteCard: { type: Function, required: true, validator: (value) => value.length === 1 },
   },
   data: () => ({
     card: null,
@@ -45,6 +44,7 @@ export default {
   },
   methods: {
     closeModalWithAnimation() {
+      if (this.closeAnimation) return;
       this.closeAnimation = true;
       setTimeout(this.closeModal, 200);
     },

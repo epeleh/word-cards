@@ -13,11 +13,11 @@
         <div class="card-menu">
           <VisibilityIcon v-if="card.active" />
           <VisibilityOffIcon v-else />
-          <h4 :title="`#${card.id}`">{{`#${card.id}`}}</h4>
+          <h4 :title="`#${card.id}`">{{ `#${card.id}` }}</h4>
         </div>
 
-        <p>{{card.text}}</p>
-        <p>{{card.translation}}</p>
+        <p>{{ card.text }}</p>
+        <p>{{ card.translation }}</p>
 
         <div class="upload-image">
           <button @click="deleteImage" v-if="card.image_path !== null" class="delete-image-btn"
@@ -38,9 +38,9 @@
       </div>
 
       <ul class="additional-info">
-        <li>{{formatDateText(`Met at: ${card.met_at}`)}}</li>
-        <li>{{formatDateText(`Created at: ${card.created_at}`)}}</li>
-        <li>{{formatDateText(`Updated at: ${card.updated_at}`)}}</li>
+        <li>{{ formatDateText(`Met at: ${card.met_at}`) }}</li>
+        <li>{{ formatDateText(`Created at: ${card.created_at}`) }}</li>
+        <li>{{ formatDateText(`Updated at: ${card.updated_at}`) }}</li>
       </ul>
     </div>
   </div>
@@ -53,14 +53,13 @@ import ClearIcon from '@/assets/icons/clear.svg';
 import SaveIcon from '@/assets/icons/save.svg';
 
 export default {
-  name: 'CardInfoModal',
   inject: ['backendUrl'],
   components: {
     VisibilityIcon, VisibilityOffIcon, ClearIcon, SaveIcon,
   },
   props: {
-    cardId: { type: Number, required: true },
-    closeModal: { type: Function, required: true },
+    cardId: { type: Number, required: true, validator: (value) => value > 0 },
+    closeModal: { type: Function, required: true, validator: (value) => !value.length },
   },
   data: () => ({
     card: null,
@@ -87,6 +86,7 @@ export default {
   },
   methods: {
     closeModalWithAnimation() {
+      if (this.closeAnimation) return;
       this.closeAnimation = true;
       setTimeout(this.closeModal, 200);
     },
