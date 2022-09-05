@@ -84,6 +84,8 @@ export default {
       e.preventDefault();
 
       if (['Space', 'Enter'].includes(e.code)) this.onCardClick();
+      else if (e.code === 'ArrowUp') this.inverted = true;
+      else if (e.code === 'ArrowDown') this.inverted = false;
       else if (e.code === 'ArrowLeft') this.onForgetClick();
       else if (e.code === 'ArrowRight') this.onRememberClick();
     },
