@@ -11,7 +11,7 @@ require 'logger'
 Sequel.default_timezone = :utc
 
 DB = File.join(__dir__, 'storage', 'db.sqlite').then do |filepath|
-  FileUtils.mkdir(File.dirname(filepath)) unless File.directory?(File.dirname(filepath))
+  FileUtils.mkdir_p File.dirname(filepath)
   Sequel.sqlite filepath
 end
 
