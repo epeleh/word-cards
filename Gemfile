@@ -8,7 +8,7 @@ ruby File.read('.ruby-version').strip
 gem 'archive-zip', '~> 0.12.0'
 gem 'puma', '~> 5.5'
 gem 'sequel', '~> 5.52'
-gem 'sinatra', '~> 2.1'
+gem 'sinatra', '~> 2.2'
 gem 'sinatra-contrib', '~> 2.1'
 gem 'sqlite3', '~> 1.4'
 
