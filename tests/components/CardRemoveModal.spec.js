@@ -3,6 +3,7 @@ import CardRemoveModal from '@/components/CardRemoveModal.vue';
 
 describe('CardRemoveModal.vue', () => {
   let wrapper;
+  afterEach(() => wrapper?.unmount());
 
   describe('when api responds with 404 status', () => {
     beforeEach(() => {
@@ -28,6 +29,60 @@ describe('CardRemoveModal.vue', () => {
 
     it('displays "no-card-banner" with the correct text', () => {
       expect(wrapper.get('h2.no-card-banner').text()).toBe('The card was not found :(');
+    });
+
+    describe('when pressing the Escape key', () => {
+      it("doesn't delete the card", () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape' }));
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+      });
+
+      it('closes the modal', () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenNthCalledWith(1);
+      });
+    });
+
+    describe('when pressing the Enter key', () => {
+      it("doesn't delete the card", () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Enter' }));
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+      });
+
+      it("doesn't close the modal", () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Enter' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+      });
+    });
+
+    describe('when pressing the Delete key', () => {
+      it("doesn't delete the card", () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Delete' }));
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+      });
+
+      it("doesn't close the modal", () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Delete' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+      });
     });
   });
 
@@ -83,6 +138,7 @@ describe('CardRemoveModal.vue', () => {
 
       jest.useFakeTimers();
       await wrapper.get('div.card-remove.remembered button.btn.no-btn').trigger('click');
+      await wrapper.get('div.card-remove.remembered button.btn.no-btn').trigger('click');
       jest.runAllTimers();
 
       expect(global.closeModal).toHaveBeenNthCalledWith(1);
@@ -94,6 +150,60 @@ describe('CardRemoveModal.vue', () => {
 
       await wrapper.get('div.card-remove.remembered button.btn.yes-btn').trigger('click');
       expect(global.deleteCard).toHaveBeenNthCalledWith(1, 42);
+    });
+
+    describe('when pressing the Escape key', () => {
+      it("doesn't delete the card", () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape' }));
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+      });
+
+      it('closes the modal', () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenNthCalledWith(1);
+      });
+    });
+
+    describe('when pressing the Enter key', () => {
+      it('deletes the card', () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Enter' }));
+        expect(global.deleteCard).toHaveBeenNthCalledWith(1, 42);
+      });
+
+      it('closes the modal', () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Enter' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenNthCalledWith(1);
+      });
+    });
+
+    describe('when pressing the Delete key', () => {
+      it('deletes the card', () => {
+        expect(global.deleteCard).toHaveBeenCalledTimes(0);
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Delete' }));
+        expect(global.deleteCard).toHaveBeenNthCalledWith(1, 42);
+      });
+
+      it('closes the modal', () => {
+        expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+        jest.useFakeTimers();
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Delete' }));
+        jest.runAllTimers();
+
+        expect(global.closeModal).toHaveBeenNthCalledWith(1);
+      });
     });
   });
 });

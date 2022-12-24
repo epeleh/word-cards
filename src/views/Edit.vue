@@ -178,11 +178,13 @@ export default {
   },
   computed: {
     filteredCards() {
+      if (!Array.isArray(this.cards)) return [];
+
       const search = this.search.toLowerCase().trim();
       const searchWords = search.replace(/^#/, '').split('&').map(_.method('trim'));
 
       return _.orderBy(
-        (this.cards ?? []).filter((card) => (!search.startsWith('#') ? (
+        this.cards.filter((card) => (!search.startsWith('#') ? (
           [card.text.toLowerCase(), card.translation.toLowerCase()].some((x) => x.includes(search))
         ) : (
           searchWords.every((word) => [

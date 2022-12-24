@@ -3,6 +3,7 @@ import Home from '@/views/Home.vue';
 
 describe('Home.vue', () => {
   let wrapper;
+  afterEach(() => wrapper?.unmount());
 
   describe('when api responds with 404 status', () => {
     beforeEach(() => {

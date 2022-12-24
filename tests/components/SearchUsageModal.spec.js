@@ -3,6 +3,7 @@ import SearchUsageModal from '@/components/SearchUsageModal.vue';
 
 describe('SearchUsageModal.vue', () => {
   let wrapper;
+  afterEach(() => wrapper?.unmount());
 
   beforeEach(() => {
     wrapper = shallowMount(SearchUsageModal, {
@@ -22,7 +23,7 @@ describe('SearchUsageModal.vue', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('displays correct text', () => {
+  it('displays the correct text', () => {
     expect(wrapper.get('.usage h2').text()).toBe('Search usage');
     expect(wrapper.findAll('.usage p').map((x) => x.text()).join(' ')).toBe([
       '- find a card by id',

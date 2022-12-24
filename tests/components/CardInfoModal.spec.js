@@ -3,6 +3,7 @@ import CardInfoModal from '@/components/CardInfoModal.vue';
 
 describe('CardInfoModal.vue', () => {
   let wrapper;
+  afterEach(() => wrapper?.unmount());
 
   describe('when api responds with 404 status', () => {
     beforeEach(() => {

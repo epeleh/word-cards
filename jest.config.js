@@ -12,5 +12,6 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.vue',
   ],
+  coverageProvider: 'v8',
   verbose: true,
 };

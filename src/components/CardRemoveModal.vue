@@ -52,8 +52,15 @@ export default {
       if (!this.closeAnimation) this.deleteCard(this.cardId);
     },
     onKeyUp(e) {
-      if (['Enter', 'Delete'].includes(e.code)) this.deleteTheCard();
-      if (['Enter', 'Delete', 'Escape'].includes(e.code)) this.closeModalWithAnimation();
+      if (e.code === 'Escape') {
+        this.closeModalWithAnimation();
+        return;
+      }
+
+      if (typeof this.card?.id === 'number' && ['Enter', 'Delete'].includes(e.code)) {
+        this.deleteTheCard();
+        this.closeModalWithAnimation();
+      }
     },
   },
 };

@@ -5,6 +5,7 @@ import Edit from '@/views/Edit.vue';
 
 describe('Edit.vue', () => {
   let wrapper;
+  afterEach(() => wrapper?.unmount());
 
   describe('when api responds with some cards', () => {
     beforeEach(async () => {
