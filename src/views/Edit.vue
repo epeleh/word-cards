@@ -17,7 +17,7 @@
         <div class="search-input-wrapper">
           <input type="text" name="search" placeholder="search"
             :value="search" @input="(e) => search = e.target.value"
-            autocomplete="off" class="search-input"
+            autocomplete="off" class="search-input" ref="searchInput"
           >
           <p v-if="Array.isArray(cards) && search" class="count"
             :title="`${filteredCards.length} / ${cards.length}`"
@@ -200,6 +200,7 @@ export default {
     },
   },
   async created() {
+    window.addEventListener('keyup', this.onKeyUp);
     window.addEventListener('popstate', this.readUrlParams);
     this.readUrlParams();
 
@@ -208,10 +209,20 @@ export default {
     );
     this.renderCards();
   },
+  mounted() {
+    this.$refs.searchInput.focus();
+  },
   unmounted() {
+    window.removeEventListener('keyup', this.onKeyUp);
     window.removeEventListener('popstate', this.readUrlParams);
   },
   methods: {
+    onKeyUp(e) {
+      if (e.code === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        this.$router.push('/');
+      }
+    },
     renderCards(restart = true) {
       if (restart) this.cardsDisplayLimit = 0;
       this.cardsDisplayLimit += 10;

@@ -80,6 +80,12 @@ export default {
   },
   methods: {
     onKeyUp(e) {
+      if (e.code === 'KeyE') {
+        e.preventDefault();
+        this.$router.push('/edit');
+        return;
+      }
+
       if (typeof this.card?.id !== 'number') return;
       e.preventDefault();
 
