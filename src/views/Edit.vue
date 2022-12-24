@@ -210,7 +210,11 @@ export default {
     this.renderCards();
   },
   mounted() {
-    this.$refs.searchInput.focus();
+    const isSomeModalOpen = [
+      this.searchUsageModalCardId, this.infoModalCardId, this.removeModalCardId,
+    ].some((x) => x !== null);
+
+    if (!isSomeModalOpen) this.$refs.searchInput.focus();
   },
   unmounted() {
     window.removeEventListener('keyup', this.onKeyUp);
