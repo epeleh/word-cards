@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { shallowMount } from '@vue/test-utils';
 import SearchUsageModal from '@/components/SearchUsageModal.vue';
 
@@ -35,5 +36,17 @@ describe('SearchUsageModal.vue', () => {
       '- show cards you forget',
       'also, you can combine filters, like this:',
     ].join(' '));
+  });
+
+  describe('when pressing the Escape key', () => {
+    it('closes the modal', () => {
+      expect(global.closeModal).toHaveBeenCalledTimes(0);
+
+      jest.useFakeTimers();
+      _.times(5, () => window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape' })));
+      jest.runAllTimers();
+
+      expect(global.closeModal).toHaveBeenNthCalledWith(1);
+    });
   });
 });
