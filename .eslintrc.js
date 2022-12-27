@@ -37,6 +37,7 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'function-call-argument-newline': 'off',
     'function-paren-newline': 'off',
+    'no-param-reassign': 'off',
     'no-unused-vars': 'off',
     'default-case': 'off',
     'vue/no-unused-components': 'warn',

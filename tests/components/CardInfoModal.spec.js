@@ -98,9 +98,53 @@ describe('CardInfoModal.vue', () => {
       );
     });
 
+    it('displays the correct additional info', async () => {
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 840; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        'Met at: 2022-02-12 09:00:13',
+        'Created at: 2022-02-11 14:58:09',
+        'Updated at: 2022-02-12 09:00:13',
+      ]);
+
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 840 - 1; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        'Met at: 2022-02-12 09:00',
+        'Created at: 2022-02-11 14:58',
+        'Updated at: 2022-02-12 09:00',
+      ]);
+
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 800 - 1; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        'M: 2022-02-12 09:00:13',
+        'C: 2022-02-11 14:58:09',
+        'U: 2022-02-12 09:00:13',
+      ]);
+
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 720 - 1; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        'M: 2022-02-12 09:00',
+        'C: 2022-02-11 14:58',
+        'U: 2022-02-12 09:00',
+      ]);
+
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 670 - 1; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        'M: 2022-02-12',
+        'C: 2022-02-11',
+        'U: 2022-02-12',
+      ]);
+
+      await _.tap(wrapper.vm, (vm) => { vm.$windowWidth = 580 - 1; }).$forceUpdate();
+      expect(wrapper.findAll('ul.additional-info > li').map((x) => x.text())).toEqual([
+        '',
+        '',
+        '',
+      ]);
+    });
+
     describe("when the card doesn't have an image", () => {
       it('allows to upload an image', async () => {
-        expect(wrapper.find('img.upload-img').exists()).toBe(false);
+        expect(wrapper.find('div.upload-image > img.upload-img').exists()).toBe(false);
 
         global.fetch = jest.fn(async () => ({
           ok: true,
@@ -117,15 +161,21 @@ describe('CardInfoModal.vue', () => {
           }),
         }));
 
-        await wrapper.get('input.upload-input').trigger('change');
+        await wrapper.get('div.upload-image > input.upload-input').trigger('change');
         await flushPromises();
 
-        const imgSrc = wrapper.get('img.upload-img').attributes('src');
+        const imgSrc = wrapper.get('div.upload-image > img.upload-img').attributes('src');
         expect(imgSrc).toBe('/storage/card_42.png?1644670808000');
+
+        global.fetch = jest.fn(async () => ({ ok: false, status: 500 }));
+        await wrapper.get('div.upload-image > input.upload-input').trigger('change');
+        await flushPromises();
+
+        expect(wrapper.get('h2.no-card-banner').text()).toBe('Something went wrong :(');
       });
 
       it("doesn't allow to delete the image", () => {
-        expect(wrapper.find('button.delete-image-btn').exists()).toBe(false);
+        expect(wrapper.find('div.upload-image > button.delete-image-btn').exists()).toBe(false);
       });
     });
 
@@ -146,12 +196,12 @@ describe('CardInfoModal.vue', () => {
           }),
         }));
 
-        await wrapper.get('input.upload-input').trigger('change');
+        await wrapper.get('div.upload-image > input.upload-input').trigger('change');
         await flushPromises();
       });
 
       it('allows to upload a new image', async () => {
-        const oldImgSrc = wrapper.get('img.upload-img').attributes('src');
+        const oldImgSrc = wrapper.get('div.upload-image > img.upload-img').attributes('src');
         expect(oldImgSrc).toBe('/storage/card_42.jpg?1644664333000');
 
         global.fetch = jest.fn(async () => ({
@@ -169,18 +219,24 @@ describe('CardInfoModal.vue', () => {
           }),
         }));
 
-        await wrapper.get('input.upload-input').trigger('change');
+        await wrapper.get('div.upload-image > input.upload-input').trigger('change');
         await flushPromises();
 
-        const newImgSrc = wrapper.get('img.upload-img').attributes('src');
+        const newImgSrc = wrapper.get('div.upload-image > img.upload-img').attributes('src');
         expect(newImgSrc).toBe('/storage/card_42.jpg?1644678853000');
         expect(newImgSrc).not.toBe(oldImgSrc);
+
+        global.fetch = jest.fn(async () => ({ ok: false, status: 404 }));
+        await wrapper.get('div.upload-image > button.delete-image-btn').trigger('click');
+        await flushPromises();
+
+        expect(wrapper.get('h2.no-card-banner').text()).toBe('The card was not found :(');
       });
 
       it('allows to delete the image', async () => {
-        const oldImgSrc = wrapper.get('img.upload-img').attributes('src');
+        const oldImgSrc = wrapper.get('div.upload-image > img.upload-img').attributes('src');
         expect(oldImgSrc).toBe('/storage/card_42.jpg?1644664333000');
-        expect(wrapper.find('button.delete-image-btn').exists()).toBe(true);
+        expect(wrapper.find('div.upload-image > button.delete-image-btn').exists()).toBe(true);
 
         global.fetch = jest.fn(async () => ({
           ok: true,
@@ -197,11 +253,11 @@ describe('CardInfoModal.vue', () => {
           }),
         }));
 
-        await wrapper.get('button.delete-image-btn').trigger('click');
+        await wrapper.get('div.upload-image > button.delete-image-btn').trigger('click');
         await flushPromises();
 
-        expect(wrapper.find('img.upload-img').exists()).toBe(false);
-        expect(wrapper.find('button.delete-image-btn').exists()).toBe(false);
+        expect(wrapper.find('div.upload-image > img.upload-img').exists()).toBe(false);
+        expect(wrapper.find('div.upload-image > button.delete-image-btn').exists()).toBe(false);
       });
     });
 

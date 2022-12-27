@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 import VisibilityIcon from '@/assets/icons/visibility.svg';
 import VisibilityOffIcon from '@/assets/icons/visibility_off.svg';
 import ClearIcon from '@/assets/icons/clear.svg';
@@ -95,20 +97,20 @@ export default {
     },
     formatDateText(text) {
       const str = text.slice(0, text.indexOf(':'));
-      const date = new Date(
+      const d = new Date(
         text.replace(/^\w+ at: (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) UTC$/, '$1T$2Z'),
       );
 
       if (this.$windowWidth < 580) return '';
 
       return `${this.$windowWidth < 800 ? str[0] : str}: ${[
-        date.getUTCFullYear(), '-', date.getUTCMonth() + 1, '-', date.getUTCDate(),
+        d.getUTCFullYear(), '-', d.getUTCMonth() + 1, '-', d.getUTCDate(),
         this.$windowWidth < 670 ? '' : ' ',
-        this.$windowWidth < 670 ? '' : date.getUTCHours(),
+        this.$windowWidth < 670 ? '' : d.getUTCHours(),
         this.$windowWidth < 670 ? '' : ':',
-        this.$windowWidth < 670 ? '' : date.getUTCMinutes(),
-        this.$windowWidth < 840 ? '' : ':',
-        this.$windowWidth < 840 ? '' : date.getUTCSeconds(),
+        this.$windowWidth < 670 ? '' : d.getUTCMinutes(),
+        this.$windowWidth < 720 || _.inRange(this.$windowWidth, 800, 840) ? '' : ':',
+        this.$windowWidth < 720 || _.inRange(this.$windowWidth, 800, 840) ? '' : d.getUTCSeconds(),
       ].map((x) => (typeof x === 'string' ? x : String(x).padStart(2, '0'))).join('')}`;
     },
     async uploadImage(event) {
