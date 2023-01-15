@@ -104,13 +104,13 @@ export default {
       if (this.$windowWidth < 580) return '';
 
       return `${this.$windowWidth < 800 ? str[0] : str}: ${[
-        d.getUTCFullYear(), '-', d.getUTCMonth() + 1, '-', d.getUTCDate(),
+        d.getFullYear(), '-', d.getMonth() + 1, '-', d.getDate(),
         this.$windowWidth < 670 ? '' : ' ',
-        this.$windowWidth < 670 ? '' : d.getUTCHours(),
+        this.$windowWidth < 670 ? '' : d.getHours(),
         this.$windowWidth < 670 ? '' : ':',
-        this.$windowWidth < 670 ? '' : d.getUTCMinutes(),
+        this.$windowWidth < 670 ? '' : d.getMinutes(),
         this.$windowWidth < 720 || _.inRange(this.$windowWidth, 800, 840) ? '' : ':',
-        this.$windowWidth < 720 || _.inRange(this.$windowWidth, 800, 840) ? '' : d.getUTCSeconds(),
+        this.$windowWidth < 720 || _.inRange(this.$windowWidth, 800, 840) ? '' : d.getSeconds(),
       ].map((x) => (typeof x === 'string' ? x : String(x).padStart(2, '0'))).join('')}`;
     },
     async uploadImage(event) {
