@@ -8,12 +8,11 @@ require 'sqlite3'
 require 'sequel'
 require 'logger'
 
-Sequel.default_timezone = :utc
+STORAGE_FOLDER = File.join(__dir__, 'storage').freeze
+FileUtils.mkdir_p STORAGE_FOLDER
 
-DB = File.join(__dir__, 'storage', 'db.sqlite').then do |filepath|
-  FileUtils.mkdir_p File.dirname(filepath)
-  Sequel.sqlite filepath
-end
+DB = Sequel.sqlite File.join(STORAGE_FOLDER, 'db.sqlite')
+Sequel.default_timezone = :utc
 
 DB.create_table? :cards do
   primary_key :id
@@ -31,18 +30,19 @@ DB.create_table? :cards do
   datetime :updated_at, null: false
 end
 
-DB[:cards].exclude(image_path: nil).select_map(:id).then do |image_card_ids|
-  File.delete(
-    *Dir[File.join(__dir__, 'storage', 'card_*.*')].reject do |image|
-      image_card_ids.include?(File.basename(image, File.extname(image)).delete_prefix('card_').to_i)
-    end
-  )
+# Synchronize storage images and database records
+DB[:cards].exclude(image_path: nil).select_map(:id).then do |ids_of_cards_with_an_image|
+  storage_images = Dir[File.join(STORAGE_FOLDER, 'card_*.*')]
+  extract_id_from_image_filepath = ->(path) { File.basename(path, File.extname(path)).delete_prefix('card_').to_i }
 
-  DB[:cards].where(
-    id: image_card_ids - Dir[File.join(__dir__, 'storage', 'card_*.*')].map do |image|
-      File.basename(image, File.extname(image)).delete_prefix('card_').to_i
-    end
-  ).update(image_path: nil, updated_at: Time.now.utc)
+  needless_images = storage_images.reject do |image|
+    ids_of_cards_with_an_image.include? extract_id_from_image_filepath.call(image)
+  end
+
+  File.delete(*needless_images)
+
+  ids_of_cards_with_a_lost_image = ids_of_cards_with_an_image - storage_images.map(&extract_id_from_image_filepath)
+  DB[:cards].where(id: ids_of_cards_with_a_lost_image).update(image_path: nil, updated_at: Time.now.utc)
 end
 
 DB.logger = Logger.new($stdout)
@@ -58,8 +58,12 @@ require 'archive/zip'
 
 set :public_folder, File.join(__dir__, 'dist')
 
+def request_body_data
+  JSON.parse request.body.tap(&:rewind).read
+end
+
 def validate_card_body!
-  data = JSON.parse(request.body.tap(&:rewind).read)
+  data = request_body_data
   errors = %w[text translation met_at remembered active].zip([]).to_h.transform_values { [] }
 
   if data['text'].nil?
@@ -104,9 +108,11 @@ end
 namespace '/api' do
   before do
     content_type :json
+
     if settings.development?
       headers 'Access-Control-Allow-Origin' => '*'
       headers 'Access-Control-Allow-Methods' => '*'
+
       halt 200 if request.request_method == 'OPTIONS'
     end
   end
@@ -118,20 +124,28 @@ namespace '/api' do
 
   namespace '/cards' do
     cards_cache = {}
-    get do
-      total_changes = DB.select(Sequel.function(:total_changes)).single_value
-      (cards_cache = cards_cache.slice(total_changes))[total_changes] ||= DB[:cards].all.to_json
+    get do # This route uses "cards_cache" to optimize response speed
+      db_connection_total_changes = DB.select(Sequel.function(:total_changes)).single_value
+
+      # Select records from the "cards" table only if there have been any changes in the database
+      unless cards_cache.key?(db_connection_total_changes)
+        cards_cache = { db_connection_total_changes => DB[:cards].all }
+      end
+
+      cards_cache.fetch(db_connection_total_changes).to_json
     end
 
     get '/next' do
       remembered = DB[:cards].where(active: true).order(Sequel.function(:random)).get(:remembered)
       halt(404) if remembered.nil?
+
       DB[:cards].where(active: true, remembered:).order(:met_at).first.to_json
     end
 
     get '/:id' do
       card = DB[:cards][id: params[:id]]
       halt(404) if card.nil?
+
       card.to_json
     end
 
@@ -139,7 +153,7 @@ namespace '/api' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
       halt(400) if params.dig('image', 'tempfile').nil? || !params.dig('image', 'type').start_with?('image/')
 
-      dist = File.join(__dir__, 'storage', "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
+      dist = File.join(STORAGE_FOLDER, "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
       FileUtils.cp(params.dig('image', 'tempfile').path, dist)
 
       halt(500) unless DB[:cards].where(id: params[:id]).update(
@@ -147,7 +161,7 @@ namespace '/api' do
       ) == 1
 
       File.delete(
-        *Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")].reject do |image|
+        *Dir[File.join(STORAGE_FOLDER, "card_#{params[:id]}.*")].reject do |image|
           File.extname(image) == File.extname(dist)
         end
       )
@@ -161,7 +175,7 @@ namespace '/api' do
 
       current_time = Time.now.utc
       attributes = { 'met_at' => current_time, 'created_at' => current_time, 'updated_at' => current_time }.merge(
-        JSON.parse(request.body.tap(&:rewind).read).slice('text', 'translation', 'met_at', 'remembered', 'active')
+        request_body_data.slice('text', 'translation', 'met_at', 'remembered', 'active')
       ).transform_keys(&:to_sym)
 
       attributes[:text].strip!
@@ -175,7 +189,7 @@ namespace '/api' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
       validate_card_body!
 
-      attributes = JSON.parse(request.body.tap(&:rewind).read).slice(
+      attributes = request_body_data.slice(
         'text', 'translation', 'met_at', 'remembered', 'active'
       ).transform_keys(&:to_sym)
 
@@ -194,15 +208,18 @@ namespace '/api' do
       halt(404) if DB[:cards].exclude(image_path: nil).where(id: params[:id]).empty?
 
       halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: nil, updated_at: Time.now.utc) == 1
-      File.delete(*Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")])
+      File.delete(*Dir[File.join(STORAGE_FOLDER, "card_#{params[:id]}.*")])
 
       DB[:cards][id: params[:id]].to_json
     end
 
     delete '/:id' do
       halt(404) if DB[:cards].where(id: params[:id]).empty?
-      File.delete(*Dir[File.join(__dir__, 'storage', "card_#{params[:id]}.*")])
-      DB[:cards].where(id: params[:id]).delete == 1 ? halt(200) : halt(500)
+
+      halt(500) unless DB[:cards].where(id: params[:id]).delete == 1
+      File.delete(*Dir[File.join(STORAGE_FOLDER, "card_#{params[:id]}.*")])
+
+      halt(200)
     end
   end
 
@@ -211,12 +228,13 @@ end
 
 namespace '/storage' do
   get '/:filename' do
-    send_file File.join(__dir__, 'storage', params[:filename])
+    send_file File.join(STORAGE_FOLDER, params[:filename])
   end
 
   get '.zip' do
     zipfile = File.join(Dir.mktmpdir, "storage-#{Time.now.utc.strftime('%Y%m%d%H%M%S')}.zip")
-    Archive::Zip.archive(zipfile, File.join(__dir__, 'storage'))
+    Archive::Zip.archive(zipfile, STORAGE_FOLDER)
+
     send_file zipfile, filename: File.basename(zipfile)
   end
 
