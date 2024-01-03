@@ -58,6 +58,10 @@ require 'archive/zip'
 
 set :public_folder, File.join(__dir__, 'dist')
 
+def id_param_invalid?
+  !/\A[1-9]+\d*\z/.match?(params[:id])
+end
+
 def request_body_data
   JSON.parse request.body.tap(&:rewind).read
 end
@@ -96,8 +100,9 @@ def validate_card_body!
     errors['met_at'] << 'invalid date format'
   end
 
-  errors['remembered'] << 'should be Boolean' if data.key?('remembered') && ![true, false].include?(data['remembered'])
-  errors['active'] << 'should be Boolean' if data.key?('active') && ![true, false].include?(data['active'])
+  %w[remembered active].each do |param|
+    errors[param] << 'should be Boolean' if data.key?(param) && ![true, false].include?(data.fetch(param))
+  end
 
   errors.reject! { |_, v| v.empty? }
   return if errors.empty?
@@ -143,6 +148,8 @@ namespace '/api' do
     end
 
     get '/:id' do
+      halt(404) if id_param_invalid?
+
       card = DB[:cards][id: params[:id]]
       halt(404) if card.nil?
 
@@ -150,7 +157,7 @@ namespace '/api' do
     end
 
     post '/:id/image' do
-      halt(404) if DB[:cards].where(id: params[:id]).empty?
+      halt(404) if id_param_invalid? || DB[:cards].where(id: params[:id]).empty?
       halt(400) if params.dig('image', 'tempfile').nil? || !params.dig('image', 'type').start_with?('image/')
 
       dist = File.join(STORAGE_FOLDER, "card_#{params[:id]}#{File.extname(params.dig('image', 'tempfile'))}")
@@ -186,7 +193,7 @@ namespace '/api' do
     end
 
     put '/:id' do
-      halt(404) if DB[:cards].where(id: params[:id]).empty?
+      halt(404) if id_param_invalid? || DB[:cards].where(id: params[:id]).empty?
       validate_card_body!
 
       attributes = request_body_data.slice(
@@ -205,7 +212,7 @@ namespace '/api' do
     end
 
     delete '/:id/image' do
-      halt(404) if DB[:cards].exclude(image_path: nil).where(id: params[:id]).empty?
+      halt(404) if id_param_invalid? || DB[:cards].exclude(image_path: nil).where(id: params[:id]).empty?
 
       halt(500) unless DB[:cards].where(id: params[:id]).update(image_path: nil, updated_at: Time.now.utc) == 1
       File.delete(*Dir[File.join(STORAGE_FOLDER, "card_#{params[:id]}.*")])
@@ -214,7 +221,7 @@ namespace '/api' do
     end
 
     delete '/:id' do
-      halt(404) if DB[:cards].where(id: params[:id]).empty?
+      halt(404) if id_param_invalid? || DB[:cards].where(id: params[:id]).empty?
 
       halt(500) unless DB[:cards].where(id: params[:id]).delete == 1
       File.delete(*Dir[File.join(STORAGE_FOLDER, "card_#{params[:id]}.*")])
