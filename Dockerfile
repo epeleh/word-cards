@@ -12,7 +12,7 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
   && apt-get install -qq --no-install-recommends nodejs \
   && apt-get upgrade -qq \
   && rm -rf /var/lib/apt/lists/* \
-  && npm install \
+  && npm clean-install \
   && npm run build \
   && rm -rf .browserslistrc .eslintrc.js babel.config.js vue.config.js \
   node_modules/ package-lock.json package.json public/ src/ \

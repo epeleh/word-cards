@@ -21,7 +21,7 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '20.10.0'
-    - run: npm install
+    - run: npm clean-install
     - run: npm test
 
   eslint:
@@ -31,7 +31,7 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '20.10.0'
-    - run: npm install
+    - run: npm clean-install
     - run: npm run lint
 
   rubocop:
