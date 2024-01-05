@@ -13,6 +13,7 @@ gem 'sinatra-contrib', '~> 2.1'
 gem 'sqlite3', '~> 1.4'
 
 group :development do
+  gem 'bundler-audit', '~> 0.9.1'
   gem 'pry', '~> 0.14.1'
   gem 'rubocop', '~> 1.25'
   gem 'rubocop-sequel', '~> 0.3.3'

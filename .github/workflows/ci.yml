@@ -43,3 +43,13 @@ jobs:
         ruby-version: '3.3.0'
     - run: bundle install
     - run: bundle exec rubocop
+
+  bundle-audit:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3.0'
+    - run: bundle install
+    - run: bundle exec bundle-audit check --update
