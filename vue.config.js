@@ -6,7 +6,7 @@ module.exports = {
     svgRule.delete('type');
     svgRule.delete('generator');
 
-    svgRule.use('vue-loader').loader('vue-loader-v16');
+    svgRule.use('vue-loader').loader('vue-loader');
     svgRule.use('vue-svg-loader').loader('vue-svg-loader');
 
     config.optimization.minimizer('terser').tap((args) => {
