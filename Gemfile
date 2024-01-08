@@ -6,7 +6,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version').strip
 
 gem 'archive-zip', '~> 0.12.0'
-gem 'puma', '~> 5.5'
+gem 'puma', '~> 5.6'
 gem 'sequel', '~> 5.52'
 gem 'sinatra', '~> 2.1'
 gem 'sinatra-contrib', '~> 2.1'
